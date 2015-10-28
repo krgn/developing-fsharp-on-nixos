@@ -260,7 +260,7 @@ TODO: improve this slide
 
 *****
 
-## But we're building an executable, right?!
+#### But we're building an executable, right?!
 
 The project template at this point generates a library project by default, so
 the _.fsproj_ file needs to be amended in 2 ways:
@@ -281,6 +281,12 @@ so we need to comment it and the code in _Tests.fs_ out to ensure a clean build.
 
 <div class="notes">
 </div>
+
+*****
+
+## Phew!
+
+![](img/phew.png)
 
 *****
 
