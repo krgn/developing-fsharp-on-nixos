@@ -1,9 +1,9 @@
 ﻿namespace System
 open System.Reflection
 
-[<assembly: AssemblyTitleAttribute("PaperTrail")>]
-[<assembly: AssemblyProductAttribute("PaperTrail")>]
-[<assembly: AssemblyDescriptionAttribute("A search API for FP papers")>]
+[<assembly: AssemblyTitleAttribute("PaperScraper")>]
+[<assembly: AssemblyProductAttribute("PaperScraper")>]
+[<assembly: AssemblyDescriptionAttribute("Project has no summmary; update build.fsx")>]
 [<assembly: AssemblyVersionAttribute("1.0")>]
 [<assembly: AssemblyFileVersionAttribute("1.0")>]
 do ()

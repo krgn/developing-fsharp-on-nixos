@@ -1,4 +1,4 @@
-namespace PaperTrail
+namespace PaperScraper
 
 /// Documentation for my library
 ///

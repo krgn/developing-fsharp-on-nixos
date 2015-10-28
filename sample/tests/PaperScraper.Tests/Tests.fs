@@ -1,6 +1,6 @@
-module PaperTrail.Tests
+module PaperScraper.Tests
 
-open PaperTrail
+open PaperScraper
 open NUnit.Framework
 
 [<Test>]

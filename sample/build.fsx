@@ -28,24 +28,24 @@ open SourceLink
 
 // The name of the project
 // (used by attributes in AssemblyInfo, name of a NuGet package and directory in 'src')
-let project = "PaperTrail"
+let project = "PaperScraper"
 
 // Short summary of the project
 // (used as description in AssemblyInfo and as a short summary for NuGet package)
-let summary = "A search API for FP papers"
+let summary = "Project has no summmary; update build.fsx"
 
 // Longer description of the project
 // (used as a description for NuGet package; line breaks are automatically cleaned up)
-let description = "A search API for FP papers"
+let description = "Project has no description; update build.fsx"
 
 // List of author names (for NuGet package)
-let authors = [ "Karsten Gebbert" ]
+let authors = [ "Update Author in build.fsx" ]
 
 // Tags for your project (for NuGet package)
-let tags = "FP Search API"
+let tags = ""
 
 // File system information 
-let solutionFile  = "PaperTrail.sln"
+let solutionFile  = "PaperScraper.sln"
 
 // Pattern specifying assemblies to be tested using NUnit
 let testAssemblies = "tests/**/bin/Release/*Tests*.dll"
@@ -56,7 +56,7 @@ let gitOwner = "Update GitHome in build.fsx"
 let gitHome = "https://github.com/" + gitOwner
 
 // The name of the project on GitHub
-let gitName = "PaperTrail"
+let gitName = "PaperScraper"
 
 // The url for the raw files hosted
 let gitRaw = environVarOrDefault "gitRaw" "https://raw.github.com/Update GitHome in build.fsx"

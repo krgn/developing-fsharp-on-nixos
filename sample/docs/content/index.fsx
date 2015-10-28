@@ -4,7 +4,7 @@
 #I "../../bin"
 
 (**
-PaperTrail
+PaperScraper
 ======================
 
 Documentation
@@ -13,8 +13,8 @@ Documentation
   <div class="span1"></div>
   <div class="span6">
     <div class="well well-small" id="nuget">
-      The PaperTrail library can be <a href="https://nuget.org/packages/PaperTrail">installed from NuGet</a>:
-      <pre>PM> Install-Package PaperTrail</pre>
+      The PaperScraper library can be <a href="https://nuget.org/packages/PaperScraper">installed from NuGet</a>:
+      <pre>PM> Install-Package PaperScraper</pre>
     </div>
   </div>
   <div class="span1"></div>
@@ -26,8 +26,8 @@ Example
 This example demonstrates using a function defined in this sample library.
 
 *)
-#r "PaperTrail.dll"
-open PaperTrail
+#r "PaperScraper.dll"
+open PaperScraper
 
 printfn "hello = %i" <| Library.hello 0
 
@@ -59,9 +59,9 @@ The library is available under Public Domain license, which allows modification 
 redistribution for both commercial and non-commercial purposes. For more information see the 
 [License file][license] in the GitHub repository. 
 
-  [content]: https://github.com/fsprojects/PaperTrail/tree/master/docs/content
-  [gh]: https://github.com/fsprojects/PaperTrail
-  [issues]: https://github.com/fsprojects/PaperTrail/issues
-  [readme]: https://github.com/fsprojects/PaperTrail/blob/master/README.md
-  [license]: https://github.com/fsprojects/PaperTrail/blob/master/LICENSE.txt
+  [content]: https://github.com/fsprojects/PaperScraper/tree/master/docs/content
+  [gh]: https://github.com/fsprojects/PaperScraper
+  [issues]: https://github.com/fsprojects/PaperScraper/issues
+  [readme]: https://github.com/fsprojects/PaperScraper/blob/master/README.md
+  [license]: https://github.com/fsprojects/PaperScraper/blob/master/LICENSE.txt
 *)

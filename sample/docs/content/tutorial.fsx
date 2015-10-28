@@ -10,8 +10,8 @@ Introducing your project
 Say more
 
 *)
-#r "PaperTrail.dll"
-open PaperTrail
+#r "PaperScraper.dll"
+open PaperScraper
 
 Library.hello 0
 (**

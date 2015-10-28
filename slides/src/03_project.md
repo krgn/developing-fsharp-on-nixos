@@ -119,8 +119,8 @@ Answer a couple of questions and you're set. But wait!
 
 #### A Note About Build Targets
 
-Since in _NixOS_ there is not Global Assembly Cache, the standard mechanisms for
-resolving default build targets shipped with _F#_ does not work as expected.
+Since in _NixOS_ there is no(t one, but many) Global Assembly Cache, resolving
+default build targets shipped with _F#_ does not work as expected.
 
 *****
 

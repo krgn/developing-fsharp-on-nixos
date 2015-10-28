@@ -11,17 +11,17 @@
 // (This is the original behaviour of ProjectScaffold prior to multi project support)
 let referenceBinaries = []
 // Web site location for the generated documentation
-let website = "/PaperTrail"
+let website = "/PaperScraper"
 
-let githubLink = "http://github.com/Update GitHome in build.fsx/PaperTrail"
+let githubLink = "http://github.com/Update GitHome in build.fsx/PaperScraper"
 
 // Specify more information about your project
 let info =
-  [ "project-name", "PaperTrail"
-    "project-author", "Karsten Gebbert"
-    "project-summary", "A search API for FP papers"
+  [ "project-name", "PaperScraper"
+    "project-author", "Update Author in build.fsx"
+    "project-summary", "Project has no summmary; update build.fsx"
     "project-github", githubLink
-    "project-nuget", "http://nuget.org/packages/PaperTrail" ]
+    "project-nuget", "http://nuget.org/packages/PaperScraper" ]
 
 // --------------------------------------------------------------------------------------
 // For typical project, no changes are needed below
