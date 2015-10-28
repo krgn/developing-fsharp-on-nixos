@@ -124,8 +124,8 @@ resolving default build targets shipped with _F#_ does not work as expected.
 
 *****
 
-The solution is to add a secion to all _.fsproj_ files in the solution to read
-an environment variable 
+The solution is to add a secion to all _.fsproj_ files in the solution to either
+hard-code the path or use an environment variable.
 
 *****
 
