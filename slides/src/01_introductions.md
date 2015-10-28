@@ -10,10 +10,11 @@
 
 ### Who? Why?
 
-> - I am not a Nix(OS) or F\# expert or .NET veteran
-> - this talk is aimed at people with experience level roughly to my own
+> - this talk is meant as an introduction to developing F# on NixOS
+> - I am not a Nix(OS) or F\# expert or .NET veteran (yet)
 > - sharing my personal experience and impressions
-> - it is my first talk, so please criticize me (gently :))
+> - approaches taken have a few rough edges, so please help me improve it!
+> - it is my first experience of this kind, so please do criticize me (gently)
 
 <div class="notes">
 Introductions:

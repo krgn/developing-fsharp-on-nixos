@@ -124,38 +124,107 @@ default build targets shipped with _F#_ does not work as expected.
 
 *****
 
-The solution is to add a secion to all _.fsproj_ files in the solution to either
-hard-code the path or use an environment variable.
+The solution is to patch all _.fsproj_ files in the solution and only
+conditionally set the _FSharpTargetsPath_ if the target actually exists:
+
+```
+- <FSharpTargetsPath>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio...
++ <FSharpTargetsPath Condition="Exists('$(MSBuildExtensionsPath32)\M...
+```
 
 *****
+
+There is a package _nix_ written by _@obadz_ which contains a script that finds
+and patches up _.fsproj_ files to look out for the _FSharpTargetsPath_
+enviroment variable.
 
 ```→ nix-env -i dotnetbuildhelpers```
 
 *****
 
-> → patch-fsharp-targets.sh
->   Patching F# targets in fsproj files...
->   ./src/PaperTrail/PaperTrail.fsproj
->   ./tests/PaperTrail.Tests/PaperTrail.Tests.fsproj
+#### Usage: 
 
-in scripts/.bashrc etc:
+```
+→ patch-fsharp-targets.sh
+  Patching F# targets in fsproj files...
+  ./src/PaperScraper/PaperScraper.fsproj
+  ./tests/PaperScraper.Tests/PaperScraper.Tests.fsproj
+```
 
-> → export FSharpTargetsPath=$(dirname $(which fsharpc))/../lib/mono/4.5/Microsoft.FSharp.Targets
-> or
-> → set -x FSharpTargetsPath (dirname (which fsharpc))/../lib/mono/4.5/Microsoft.FSharp.Targets
+*****
+
+Last, we only need to set _FSharpTargetsPath_ in our shell:
+
+```{.shell}
+→ export FSharpTargetsPath=$(dirname $(which fsharpc))/../lib/mono/4.5/Microsoft.FSharp.Targets
+```
+
+```{.shell .fragment}
+→ set -x FSharpTargetsPath (dirname (which fsharpc))/../lib/mono/4.5/Microsoft.FSharp.Targets
+```
+
+*****
+
+#### More Errors
+
+Unfortuantely, more problems crop up at this point.
+
+- FSharp.Core dll is missing when running tests, hence the build fails
+- FSharp.Core dll is missing when generating documentation, hence the build fails
+
+:(
+
+<div class="notes">
+- mono crashes really hard running the tests
+</div>
+
+*****
+
+#### Quick Fix:
+
+Ship _FSharp.Core_ as part of the build output and manage the dependency with _paket_.
+
+```{.fragment}
+in paket.dependencies, add;
+
+FSharp.Core = 4.0.0.1
+```
+```{.fragment}
+in src/PaperScraper/paket.references, add:
+
+FSharp.Core
+```
+
+```{.fragment}
+<Reference Include="FSharp.Core">
+  <Private>True</Private>
+  <HintPath>..\..\packages\FSharp.Core\lib\net40\FSharp.Core.dll</HintPath>
+</Reference>
+```
+
+*****
+
+
+<div class="notes">
+- mono crashes really hard running the tests
+</div>
+
+*****
+
+#### Slower (but better) Fix:
+
+
+
+*****
+
+## But we're building an executable, right?!
+
+*****
 
 Add an entry for it to `paket.dependencies` 
 
 <div class="notes">
 </div>
-
-## But we're building an executable, right?!
-
-# Suave.IO
-
-TODO: give a quick overview...
-
-Add an entry for it to `paket.dependencies` 
 
 ## Recoll
 
@@ -165,3 +234,9 @@ Add an entry for it to `paket.dependencies`
 
 <div class="notes">
 </div>
+
+## Suave.IO
+
+TODO: give a quick overview...
+
+Add an entry for it to `paket.dependencies` 
