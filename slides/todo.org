@@ -1,0 +1,6 @@
+# *scratch* buffer for creating quick outlines
+
+* TODO:
+*** IN explore containers and how to deploy to them               :important:
+*** IN highlight.js integration                                      :pretty:
+*** IN emacs-helm integration                                 :would:be:nice:
