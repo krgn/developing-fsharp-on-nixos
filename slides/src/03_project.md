@@ -156,16 +156,16 @@ enviroment variable.
 Last, we only need to set _FSharpTargetsPath_ in our shell:
 
 ```{.shell}
-→ export FSharpTargetsPath=$(dirname $(which fsharpc))/../lib/mono/4.5/Microsoft.FSharp.Targets
+→ export FSharpTargetsPath=$(dirname $(which fsharpc))/../lib/mono/Microsoft\ F\#/v4.0/Microsoft.FSharp.Targets
 ```
 
 ```{.shell .fragment}
-→ set -x FSharpTargetsPath (dirname (which fsharpc))/../lib/mono/4.5/Microsoft.FSharp.Targets
+→ set -x FSharpTargetsPath (dirname (which fsharpc))/../lib/mono/Microsoft\ F\#/v4.0/Microsoft.FSharp.Targets
 ```
 
 *****
 
-#### More Errors
+#### Hm, More Errors
 
 Unfortuantely, more problems crop up at this point.
 
@@ -177,6 +177,16 @@ Unfortuantely, more problems crop up at this point.
 <div class="notes">
 - mono crashes really hard running the tests
 </div>
+
+*****
+
+#### Ah yes!
+
+> "In compiled applications, you should never assume that FSharp.Core is in the
+> GAC ("Global Assembly Cache"). Instead, you should deploy the appropriate
+> FSharp.Core as part of your application."
+
+https://fsharp.github.io/2015/04/18/fsharp-core-notes.html
 
 *****
 
@@ -202,29 +212,77 @@ FSharp.Core
 </Reference>
 ```
 
-*****
-
-
 <div class="notes">
+- add the FSharp.Core and verision to paket.dependencies
+- add the FSharp.Core to paket.references in the project and tests project
+- make sure to set TargetFSharpCoreVersion to the correct version!
+- execute paket install again
 - mono crashes really hard running the tests
 </div>
 
 *****
 
-#### Slower (but better) Fix:
+#### A Better™ Fix:
 
+It would be better to use the F# version shipped with NixOS.
 
+```{.fragment}
+  <TargetFSharpCoreVersion>4.3.1.0</TargetFSharpCoreVersion>
+```
+
+```{.fragment}
+  <HintPath>$(TargetFSharpCorePath)</HintPath>
+```
+
+```{.shell .fragment}
+→ set -x TargetFSharpCorePath (dirname (which fsharpc))/../lib/mono/4.0/FSharp.Core.dll
+```
+
+<div class="notes">
+- this is more general and robust 
+</div>
+
+*****
+
+#### Finding the correct F\# Version 
+
+![](img/fsharp-versions.png)
+
+http://stackoverflow.com/questions/20332046/correct-version-of-fsharp-core
+
+*****
+
+#### Documentation and Help Targets
+
+They do not build at this point, for the same reasons.
+
+TODO: improve this slide
 
 *****
 
 ## But we're building an executable, right?!
 
+The project template at this point generates a library project by default, so
+the _.fsproj_ file needs to be amended in 2 ways:
+
+```{.fragment}
+    <OutputType>Exe</OutputType>
+```
+
+```{.fragment}
+    <ErrorReport>prompt</ErrorReport>
+    <Externalconsole>true</Externalconsole>
+```
+
 *****
 
-Add an entry for it to `paket.dependencies` 
+Additionally, the tests project also holds a reference to the current project,
+so we need to comment it and the code in _Tests.fs_ out to ensure a clean build.
 
 <div class="notes">
 </div>
+
+*****
 
 ## Recoll
 
@@ -240,3 +298,5 @@ Add an entry for it to `paket.dependencies`
 TODO: give a quick overview...
 
 Add an entry for it to `paket.dependencies` 
+
+## Pulling Things Together

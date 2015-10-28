@@ -10,7 +10,7 @@
     <RootNamespace>PaperScraper.Tests</RootNamespace>
     <AssemblyName>PaperScraper.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFSharpCoreVersion>4.3.0.0</TargetFSharpCoreVersion>
+    <TargetFSharpCoreVersion>4.3.1.0</TargetFSharpCoreVersion>
     <Name>PaperScraper.Tests</Name>
     <TargetFrameworkProfile />
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
@@ -62,18 +62,19 @@
     <Reference Include="mscorlib" />
     <Reference Include="FSharp.Core, Version=$(TargetFSharpCoreVersion), Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Private>True</Private>
+      <HintPath>$(TargetFSharpCorePath)</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\PaperScraper\PaperScraper.fsproj">
-      <Name>PaperScraper</Name>
-      <Project>{38cf1ad1-7678-4e89-8859-19afaf68fb42}</Project>
-      <Private>True</Private>
-    </ProjectReference>
-  </ItemGroup>
+  <!-- <ItemGroup> -->
+  <!--   <ProjectReference Include="..\..\src\PaperScraper\PaperScraper.fsproj"> -->
+  <!--     <Name>PaperScraper</Name> -->
+  <!--     <Project>{38cf1ad1-7678-4e89-8859-19afaf68fb42}</Project> -->
+  <!--     <Private>True</Private> -->
+  <!--   </ProjectReference> -->
+  <!-- </ItemGroup> -->
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
