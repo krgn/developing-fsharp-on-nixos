@@ -6,4 +6,7 @@ nuget NUnit.Runners
 nuget FAKE
 nuget SourceLink.Fake
 
+nuget Suave
+nuget FParsec
+
 github fsharp/FAKE modules/Octokit/Octokit.fsx

@@ -15,7 +15,7 @@ serve query results via HTTP.
 [1] https://github.com/ocharles/papers
 
 <div class="notes">
-- idea could at transferred to some more relevant technology like, e.g., elasticsearch 
+- idea could at transferred to some more relevant technology like, e.g., _elasticsearch_ 
 - from there, it might be interesting to go on to explore clustering and config management with nix
 </div>
 
@@ -156,11 +156,18 @@ enviroment variable.
 Last, we only need to set _FSharpTargetsPath_ in our shell:
 
 ```{.shell}
-→ export FSharpTargetsPath=$(dirname $(which fsharpc))/../lib/mono/Microsoft\ F\#/v4.0/Microsoft.FSharp.Targets
+→ export FSharpTargetsPath=$(dirname $(which fsharpc))/../lib/mono/4.5/Microsoft.FSharp.Targets
 ```
 
 ```{.shell .fragment}
-→ set -x FSharpTargetsPath (dirname (which fsharpc))/../lib/mono/Microsoft\ F\#/v4.0/Microsoft.FSharp.Targets
+→ set -x FSharpTargetsPath (dirname (which fsharpc))/../lib/mono/4.5/Microsoft.FSharp.Targets
+```
+
+```{.shell .fragment}
+{ config, pkgs, ... }:
+{
+  environment.variables.FSharpTargetsPath = "${pkgs.fsharp}/lib/mono/4.5/Microsoft.FSharp.Targets";
+}
 ```
 
 *****
@@ -235,9 +242,15 @@ It would be better to use the F# version shipped with NixOS.
 ```
 
 ```{.shell .fragment}
-→ set -x TargetFSharpCorePath (dirname (which fsharpc))/../lib/mono/4.0/FSharp.Core.dll
+→ set -x TargetFSharpCorePath (dirname (which fsharpc))/../lib/mono/4.5/FSharp.Core.dll
 ```
 
+```{.shell .fragment}
+{ config, pkgs, ... }:
+{
+  environment.variables.TargetFSharpCorePath = "${pkgs.fsharp}/lib/mono/4.5/FSharp.Core.dll";
+}
+```
 <div class="notes">
 - this is more general and robust 
 </div>
@@ -406,3 +419,102 @@ We need to:
 
 *****
 
+#### Dependencies
+
+Add Suave and FParsec to _paket.depenecies_ and _src/PaperScraper/paket.references_:
+
+```
+source https://nuget.org/api/v2
+
+nuget FSharp.Formatting
+nuget NUnit 
+nuget NUnit.Runners
+nuget FAKE
+nuget SourceLink.Fake
+
+nuget Suave
+nuget FParsec
+
+github fsharp/FAKE modules/Octokit/Octokit.fsx
+```
+
+*****
+
+Contents of _paket.references_:
+
+```
+Suave
+FParsec
+```
+
+*****
+
+##### A little Tooling 
+
+```{.fsharp .fragment}
+#r @"../../packages/Suave/lib/net40/Suave.dll"
+#r @"../../packages/FParsec/lib/net40-client/FParsecCS.dll"
+#r @"../../packages/FParsec/lib/net40-client/FParsec.dll"
+
+#load @"Types.fs"
+#load @"Recoll.fs"
+```
+
+```{.shell .fragment}
+➜ cd src/PaperScraper
+➜ fsharpi --load:script.fsx
+```
+
+<div class="notes">
+- fsharpi is currently not aware of projects so this is userful to load the
+  environment
+- other than that I miss `:type` from ghci _a lot_
+</div>
+
+*****
+
+##### Basic Types
+
+TODO: WORK IT OUT!!!
+
+```{.fsharp .fragment}
+type MimeType = string
+type FileName = string
+
+type CharSet =
+  | UTF8
+  | Other // how ignorant of me ;)
+
+type Percentage = int
+
+type Url = string
+
+type Bytes = int
+
+type Result =
+  { Abstract  : string
+  ; FileName  : FileName
+  ; MimeType  : MimeType
+  ; CharSet   : CharSet
+  ; Relevance : Percentage
+  ; Title     : string option
+  ; Url       : Url
+  ; FileSize  : Bytes
+  }
+```
+
+*****
+
+##### Parsing Recoll Output
+
+TODO: insert parser code 
+
+*****
+
+##### Querying Recoll
+
+TODO: insert query code
+
+*****
+
+##### 
