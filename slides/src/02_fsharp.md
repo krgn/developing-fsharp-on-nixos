@@ -258,6 +258,7 @@ type Tree<'a> =
 
 #### Other Cool Things To Look At
 
+> - Type Providers
 > - Monads, or _Computation Expressions_
 > - Quotations & Reflection (metaprogramming)
 > - Units of Measure

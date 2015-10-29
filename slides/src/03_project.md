@@ -294,7 +294,8 @@ so we need to comment it and the code in _Tests.fs_ out to ensure a clean build.
 
 > - full-text search tool 
 > - uses xapian underneath (like other great tools, e.g. `notmuch` and `mu`)
-> - supports many file types, including extracting text from PDFs 
+> - extensible and configurable
+> - supports indexing many mime types, including extracting text from PDFs 
 > - has a flexible query language (based on Xesam)
 > - needs to be configured correctly (whitelist directories)
 > - the indexer needs to be run in a cron/systemd timer job
@@ -325,6 +326,8 @@ title =
 url = file:///home/k/doc/books/burrito_monads.pdf
 ```
 
+*****
+
 #### Search For File Names
 
 ```
@@ -343,6 +346,61 @@ http://suave.io
 
 *****
 
+#### Features:
 
+> - combinators for request routing
+> - built-in web-server
+> - openssl support
+
+*****
+
+##### The Simplest Possible Application:
+
+``` startWebServer defaultConfig (OK "Hi.") ```
+
+*****
+
+##### More Elaborate Example
+
+```
+open Suave
+open Suave.Http
+open Suave.Http.Applicatives
+open Suave.Http.Successful
+open Suave.Web
+
+let serarch q =
+  defaultArg (Option.ofChoice(q ^^ "filename")) "nothing" |> sprintf "Found %s."
+
+let app : WebPart =
+    path "/search" >>= 
+      GET  >>= request(fun r -> OK <| search r.query)
+      RequestErrors.NOT_FOUND "Found no handlers" ]
+
+startWebServer defaultConfig app
+```
+
+<div class="notes">
+- match GET requests on `/search` endpoint
+- return a 404 for all other routes (even `/`)
+</div>
+
+*****
+
+##### Types
+
+```
+type SuaveTask<'a> = Async<'a option>
+type WebPart = HttpContext -> SuaveTask<HttpContext>
+// hence: WebPart = HttpContext -> Async<HttpContext option>
+```
 
 ## Pulling It All Together
+
+We need to:
+
+> - map query to command-line arguments
+> - write a simple parser for _recoll_ output
+> - data types (domain model) for search result
+> - serialiation of results to JSON
+
