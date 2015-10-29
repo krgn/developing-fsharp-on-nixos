@@ -491,7 +491,7 @@ type Url = string
 
 type Bytes = int
 
-type Result =
+type SearchResult =
   { Abstract  : string
   ; FileName  : FileName
   ; MimeType  : MimeType

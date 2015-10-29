@@ -1,5 +1,5 @@
+[<AutoOpen>]
 module PaperScraper.Types
-
 
 type MimeType = string
 type FileName = string
@@ -14,7 +14,7 @@ type Url = string
 
 type Bytes = int
 
-type Result =
+type SearchResult =
   { Abstract  : string
   ; FileName  : FileName
   ; MimeType  : MimeType
@@ -24,3 +24,4 @@ type Result =
   ; Url       : Url
   ; FileSize  : Bytes
   }
+
