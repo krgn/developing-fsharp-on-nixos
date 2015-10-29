@@ -48,8 +48,9 @@
     <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Library.fs" />
-    <None Include="Script.fsx" />
+    <Compile Include="Types.fs" />
+    <Compile Include="Recoll.fs" />
+    <Compile Include="Program.fs" />
     <None Include="paket.references" />
     <None Include="paket.template" />
   </ItemGroup>

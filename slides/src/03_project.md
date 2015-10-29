@@ -399,8 +399,10 @@ type WebPart = HttpContext -> SuaveTask<HttpContext>
 
 We need to:
 
-> - map query to command-line arguments
-> - write a simple parser for _recoll_ output
-> - data types (domain model) for search result
-> - serialiation of results to JSON
+> 1) create data types (domain model)
+> 2) write a simple parser for _recoll_ output
+> 3) map HTTP query to command-line arguments
+> 4) serialiation of results to JSON
+
+*****
 
