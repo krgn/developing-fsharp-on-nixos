@@ -336,8 +336,13 @@ application/pdf	[file:///home/k/doc/books/burrito_monads.pdf]	[burrito_monads.pd
 
 ## Suave.IO
 
-TODO: give a quick overview...
+> Suave is a simple web development F# library providing a lightweight web
+> server and a set of combinators to manipulate route flow and task composition.
 
-Add an entry for it to `paket.dependencies` 
+http://suave.io
+
+*****
+
+
 
 ## Pulling It All Together
