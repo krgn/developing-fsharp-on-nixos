@@ -295,9 +295,44 @@ so we need to comment it and the code in _Tests.fs_ out to ensure a clean build.
 > - full-text search tool 
 > - uses xapian underneath (like other great tools, e.g. `notmuch` and `mu`)
 > - supports many file types, including extracting text from PDFs 
+> - has a flexible query language (based on Xesam)
+> - needs to be configured correctly (whitelist directories)
+> - the indexer needs to be run in a cron/systemd timer job
 
-<div class="notes">
-</div>
+*****
+
+#### An Example
+
+```
+➜  recoll -t -n 1 -m -q burrito
+Recoll query: ((burrito:(wqf=11) OR burritos))
+5 results (printing  1 max):
+application/pdf	[file:///home/k/doc/books/burrito_monads.pdf]	[burrito_monads.pdf]	74745	bytes	
+abstract =   Burritos for the Hungry Mathematician Ed Morehouse April 1, 2015 Abstract The advent of fast-casual Mexican-style dining establishments, such as Chipotle and Qdoba, has greatly improved the productivity of research mathematicians and theoretical
+author = LaTeX with hyperref package
+dbytes = 10425
+fbytes = 74745
+filename = burrito_monads.pdf
+fmtime = 01445444345
+mtime = 01445444345
+mtype = application/pdf
+origcharset = UTF-8
+pcbytes = 74745
+rcludi = /home/k/doc/books/burrito_monads.pdf|
+relevancyrating = 100%
+sig = 747451445444345
+title = 
+url = file:///home/k/doc/books/burrito_monads.pdf
+```
+
+#### Search For File Names
+
+```
+➜  recoll -t -n 1 -f burrito
+Recoll query: (XSFSburrito_monads.pdf)
+1 results
+application/pdf	[file:///home/k/doc/books/burrito_monads.pdf]	[burrito_monads.pdf]	74745	bytes	
+```
 
 ## Suave.IO
 
@@ -305,4 +340,4 @@ TODO: give a quick overview...
 
 Add an entry for it to `paket.dependencies` 
 
-## Pulling Things Together
+## Pulling It All Together
