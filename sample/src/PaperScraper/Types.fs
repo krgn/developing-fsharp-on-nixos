@@ -16,19 +16,16 @@ type Url = string
 
 type Bytes = int64
 
-type SearchResult =
+type Row =
   { Abstract  : string
   ; FileName  : FileName
   ; MimeType  : MimeType
   ; CharSet   : CharSet
-  ; Relevance : Percentage
-  ; Title     : Name
   ; Url       : Url
-  ; FileSize  : Bytes
   }
 
 type BigQueryResult =
   { Query : QueryString
   ; Count : int64
-  ; Rows  : SearchResult list
+  ; Rows  : Row array
   }

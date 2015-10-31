@@ -49,8 +49,7 @@ let plainChar (c : char) =
     | Some(_) -> true
     | _       -> false
 
-let skipLine : Parser<unit,unit> =
-  skipRestOfLine consume
+let skipLine : Parser<string,unit> = restOfLine consume
 
 let plainChars : Parser<string, unit> = 
   manySatisfy plainChar
@@ -69,25 +68,16 @@ let queryLine : Parser<string, unit> =
   pstring "Recoll query:" >>. restOfLine consume
 
 let countLine : Parser<int64, unit> =
-  pint64 .>> skipRestOfLine consume
-
-let inbrackets : Parser<string, unit> =
-  pstring "[" >>. manySatisfy ((<>) ']') .>> spaces
+  skipManyTill anyChar (pstring "printing")
+  >>. spaces
+  >>. pint64
+  .>> skipRestOfLine consume
 
 let abstractLine : Parser<string, unit> =
   pstring "abstract = " >>. restOfLine consume
 
-let authorLine : Parser<unit, unit> =
-  attempt (pstring "author = " |>> ignore)
-
-let captionLine : Parser<unit, unit> =
-  attempt (pstring "caption = " |>> ignore)
-
 let titleLine : Parser<Name, unit> =
   pstring "title = " >>. restOfLine consume
-
-let pcbytesLine : Parser<Bytes, unit> =
-  pstring "pcbytes = " >>. pint64 .>> skipRestOfLine consume
 
 let filenameLine : Parser<FileName, unit> =
   pstring "filename = " >>. restOfLine consume
@@ -96,59 +86,74 @@ let mtypeLine : Parser<MimeType, unit> =
   pstring "mtype = " >>. mimeType .>> skipRestOfLine consume
 
 let charsetLine : Parser<CharSet,unit> =
-  pstring "origcharset = " >>= fun str ->
-    preturn <| match str with
-                | "UTF-8" -> UTF8
-                | s       -> UnknownCharset s
-      .>> skipRestOfLine consume
+  pstring "origcharset = " >>. 
+  restOfLine consume >>= fun str ->
+    match str with
+      | "UTF-8" -> UTF8
+      | s       -> UnknownCharset s
+    |> preturn
+    .>> skipRestOfLine consume
 
-let relevance : Parser<Percentage,unit> =
-  pstring "relevancyrating = " >>. spaces >>. pint64 .>> skipRestOfLine consume
-  
 let urlLine : Parser<Url, unit> =
   pstring "url = " >>. restOfLine consume
 
-let searchResult : Parser<SearchResult, unit> =
-  skipLine >>. 
-    abstractLine >>= fun abstrct ->
-      (authorLine <|> captionLine <|> skipLine) >>. skipLine >>.  // let's ignore all these
-        filenameLine >>= fun fname -> 
-          skipLine >>. skipLine >>.  // let's ignore these
-            mtypeLine >>= fun mime -> 
-              charsetLine >>= fun charset ->
-                pcbytesLine >>= fun size ->
-                  skipLine >>. 
-                    relevance >>= fun relv -> 
-                      skipLine >>. 
-                        titleLine >>= fun t -> 
-                          urlLine >>= fun url ->
-                            preturn { Abstract = abstrct
-                                    ; FileName = fname
-                                    ; MimeType = mime
-                                    ; CharSet = charset
-                                    ; Relevance = relv
-                                    ; Title = t
-                                    ; Url = url
-                                    ; FileSize = size 
-                                    }
-                              .>> skipRestOfLine consume
-      
+let skipTo p =
+  skipManyTill (restOfLine true) (lookAhead p) >>. p
 
-let bigOutput : Parser<BigQueryResult, unit> =
-  queryLine >>= fun query ->
-    countLine >>= fun count -> 
-      many searchResult >>= fun results ->
-        preturn { Query = query
-                ; Count = count
-                ; Rows  = results
-                }
-  
-let test = run (spaces >>. bigOutput)  
+let mkRow a f m c u =
+  { Abstract = a
+  ; FileName = f
+  ; MimeType = m
+  ; CharSet  = c
+  ; Url      = u }
+
+let searchResult : Parser<Row,unit> =
+  pipe5 (skipTo abstractLine)
+        (skipTo filenameLine)
+        (skipTo mtypeLine)
+        (skipTo charsetLine)
+        (skipTo urlLine)
+        mkRow
+
+// let searchResult : Parser<SearchResult, unit> =
+//   skipLine >>.  // header line
+//     abstractLine >>= fun abstrct ->
+//       skipManyTill skipLine
+//       <| filenameLine >>= fun fname -> 
+//         skipManyTill skipLine
+//         <| mtypeLine >>= fun mime -> 
+//              charsetLine >>= fun charset ->
+//                skipManyTill skipLine
+//                <| urlLine >>= fun url ->
+//                     preturn { Abstract = abstrct
+//                             ; FileName = fname
+//                             ; MimeType = mime
+//                             ; CharSet = charset
+//                             ; Url = url
+//                             }
+//                       .>> skipRestOfLine consume
+      
+let mkResult query count results =
+  { Query = query
+  ; Count = count
+  ; Rows  = results
+  }
+
+let recollOutput : Parser<BigQueryResult, unit> =
+   queryLine >>= fun q ->
+   countLine >>= fun c ->
+   (parray (int(c)) searchResult) >>= fun rows ->
+   preturn (mkResult q c rows)
+
+let parseOutput str =
+  match run (spaces >>. recollOutput) str with
+    | Success(res, _, _) -> res
+    | Failure(msg, _, _) -> failwith msg
 
 let testInput1 =
   @"
 Recoll query: ((monad:(wqf=11) OR monads OR monadic OR monadically OR monadicity OR monadized))
-1520 results (printing  1 max):
+1 results (printing  1 max):
 text/plain	[file:///home/k/doc/nixconf/sample/src/PaperScraper/Recoll.fs]	[Recoll.fs]	4890	bytes	
 abstract = [<AutoOpen>] module PaperScraper.Recoll (* recollq: usage:  -P: Shw the date span for all the documents present in the index  [-o|-a|-f] [-q] <query string>  Runs a recoll query and displays result lines.    Default: will interpret the argument(s)
 dbytes = 4890
@@ -169,7 +174,7 @@ url = file:///home/k/doc/nixconf/sample/src/PaperScraper/Recoll.fs
 let testInput2 =
   @"
 Recoll query: ((monad:(wqf=11) OR monads OR monadic OR monadically OR monadicity OR monadized))
-1519 results (printing  2 max):
+2 results (printing  2 max):
 application/pdf	[file:///home/k/doc/books/cocharles-paper/A Poor Man's Concurrency Monad.pdf]	[A Poor Man's Concurrency Monad.pdf]	196434	bytes	
 abstract =   c 1993 Cambridge University Press J. Functional Programming 1 (1): 1{000, January 1993  1 FUNCTIONAL PEARLS A Poor Man's Concurrency Monad Koen Claessen Chalmers University of Technology email: koen@cs.chalmers.se Abstract Without adding any
 dbytes = 21217
@@ -202,4 +207,25 @@ relevancyrating =  66%
 sig = 1737741444416662
 title = iterator.dvi
 url = file:///home/k/doc/books/fp/iterator.pdf
+  "
+
+let testInput3 =
+  @"
+Recoll query: ((monad:(wqf=11) OR monads OR monadic OR monadically OR monadicity OR monadized))
+1 results (printing  1 max):
+text/plain	[file:///home/k/doc/nixconf/sample/src/PaperScraper/Recoll.fs]	[Recoll.fs]	4890	bytes	
+abstract = [<AutoOpen>] module PaperScraper.Recoll (* recollq: usage:  -P: Shw the date span for all the documents present in the index  [-o|-a|-f] [-q] <query string>  Runs a recoll query and displays result lines.    Default: will interpret the argument(s)
+dbytes = 4890
+fbytes = 4890
+filename = Recoll.fs
+fmtime = 01446155658
+mtime = 01446155658
+mtype = text/plain
+origcharset = UTF-8
+pcbytes = 4890
+rcludi = /home/k/doc/nixconf/sample/src/PaperScraper/Recoll.fs|
+relevancyrating = 100%
+sig = 48901446155658
+title = 
+url = file:///home/k/doc/nixconf/sample/src/PaperScraper/Recoll.fs
   "
