@@ -38,6 +38,7 @@ Common options:
        see the field names.
 *)
 
+open System
 open FParsec
 
 let consume = true
@@ -72,6 +73,9 @@ let countLine : Parser<int64, unit> =
   >>. spaces
   >>. pint64
   .>> skipRestOfLine consume
+
+let totalLine : Parser<int64, unit> =
+  pint64 .>> skipRestOfLine consume
 
 let abstractLine : Parser<string, unit> =
   pstring "abstract = " >>. restOfLine consume
@@ -141,12 +145,12 @@ let mkResult query count results =
 
 let recollOutput : Parser<BigQueryResult, unit> =
    queryLine >>= fun q ->
-   countLine >>= fun c ->
+   totalLine >>= fun c ->
    (parray (int(c)) searchResult) >>= fun rows ->
    preturn (mkResult q c rows)
 
 let parseOutput str =
-  match run (spaces >>. recollOutput) str with
+  match run recollOutput str with
     | Success(res, _, _) -> res
     | Failure(msg, _, _) -> failwith msg
 
@@ -229,3 +233,20 @@ sig = 48901446155658
 title = 
 url = file:///home/k/doc/nixconf/sample/src/PaperScraper/Recoll.fs
   "
+
+let executeProcess (exe,cmdline) =
+  let psi = new System.Diagnostics.ProcessStartInfo(exe,cmdline) 
+  psi.UseShellExecute <- false
+  psi.RedirectStandardOutput <- true
+  let p = System.Diagnostics.Process.Start(psi) 
+  let out = p.StandardOutput.ReadToEnd() 
+  p.WaitForExit()
+  ( p.ExitCode, out )
+
+
+let queryRecoll term =
+  let binpath = "/run/current-system/sw/bin/recoll"
+  let raw = executeProcess (binpath, sprintf "-t -o -m -q %s" term)
+  if fst raw = 0
+  then parseOutput (snd raw)
+  else failwith "command failed"
