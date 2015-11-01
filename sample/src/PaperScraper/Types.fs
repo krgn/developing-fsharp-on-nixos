@@ -8,6 +8,7 @@ type Name = string
 
 type CharSet =
   | UTF8
+  | UTF16
   | UnknownCharset of string // how ignorant of me ;)
 
 type Percentage = int64
@@ -24,8 +25,15 @@ type Row =
   ; Url       : Url
   }
 
-type BigQueryResult =
+type QueryResult =
   { Query : QueryString
   ; Count : int64
   ; Rows  : Row array
   }
+
+  with
+    static member empty =
+      { Query = ""
+      ; Count = 0L
+      ; Rows  = Array.empty
+      }

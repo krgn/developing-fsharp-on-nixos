@@ -89,12 +89,18 @@ let filenameLine : Parser<FileName, unit> =
 let mtypeLine : Parser<MimeType, unit> =
   pstring "mtype = " >>. mimeType .>> skipRestOfLine consume
 
+let (|CharSetLit|_|) (prefix : string) (str : string) =
+  if str.StartsWith(prefix)
+  then Some(str.Substring(prefix.Length))
+  else None
+
 let charsetLine : Parser<CharSet,unit> =
   pstring "origcharset = " >>. 
   restOfLine consume >>= fun str ->
     match str with
-      | "UTF-8" -> UTF8
-      | s       -> UnknownCharset s
+      | CharSetLit "UTF-8" _  -> UTF8
+      | CharSetLit "UTF-16" _ -> UTF16
+      | s                     -> UnknownCharset s
     |> preturn
     .>> skipRestOfLine consume
 
@@ -136,103 +142,23 @@ let searchResult : Parser<Row,unit> =
 //                             ; Url = url
 //                             }
 //                       .>> skipRestOfLine consume
-      
+
 let mkResult query count results =
   { Query = query
   ; Count = count
   ; Rows  = results
   }
 
-let recollOutput : Parser<BigQueryResult, unit> =
-   queryLine >>= fun q ->
-   totalLine >>= fun c ->
-   (parray (int(c)) searchResult) >>= fun rows ->
-   preturn (mkResult q c rows)
+let recollOutput : Parser<QueryResult, unit> =
+  queryLine >>= fun q ->
+  totalLine >>= fun c ->
+  (parray (int(c)) searchResult) >>= fun rows ->
+  preturn (mkResult q c rows)
 
 let parseOutput str =
   match run recollOutput str with
     | Success(res, _, _) -> res
     | Failure(msg, _, _) -> failwith msg
-
-let testInput1 =
-  @"
-Recoll query: ((monad:(wqf=11) OR monads OR monadic OR monadically OR monadicity OR monadized))
-1 results (printing  1 max):
-text/plain	[file:///home/k/doc/nixconf/sample/src/PaperScraper/Recoll.fs]	[Recoll.fs]	4890	bytes	
-abstract = [<AutoOpen>] module PaperScraper.Recoll (* recollq: usage:  -P: Shw the date span for all the documents present in the index  [-o|-a|-f] [-q] <query string>  Runs a recoll query and displays result lines.    Default: will interpret the argument(s)
-dbytes = 4890
-fbytes = 4890
-filename = Recoll.fs
-fmtime = 01446155658
-mtime = 01446155658
-mtype = text/plain
-origcharset = UTF-8
-pcbytes = 4890
-rcludi = /home/k/doc/nixconf/sample/src/PaperScraper/Recoll.fs|
-relevancyrating = 100%
-sig = 48901446155658
-title = 
-url = file:///home/k/doc/nixconf/sample/src/PaperScraper/Recoll.fs
-  "
-
-let testInput2 =
-  @"
-Recoll query: ((monad:(wqf=11) OR monads OR monadic OR monadically OR monadicity OR monadized))
-2 results (printing  2 max):
-application/pdf	[file:///home/k/doc/books/cocharles-paper/A Poor Man's Concurrency Monad.pdf]	[A Poor Man's Concurrency Monad.pdf]	196434	bytes	
-abstract =   c 1993 Cambridge University Press J. Functional Programming 1 (1): 1{000, January 1993  1 FUNCTIONAL PEARLS A Poor Man's Concurrency Monad Koen Claessen Chalmers University of Technology email: koen@cs.chalmers.se Abstract Without adding any
-dbytes = 21217
-fbytes = 196433
-filename = A Poor Man's Concurrency Monad.pdf
-fmtime = 01401924059
-mtime = 01401924059
-mtype = application/pdf
-origcharset = UTF-8
-pcbytes = 196433
-rcludi = /home/k/doc/books/cocharles-paper/A Poor Man's Concurrency Monad.pdf|
-relevancyrating =  66%
-sig = 1964331444236888
-title = 
-url = file:///home/k/doc/books/cocharles-paper/A Poor Man's Concurrency Monad.pdf
-application/pdf	[file:///home/k/doc/books/fp/iterator.pdf]	[iterator.dvi]	173774	bytes	
-abstract =   Under consideration for publication in J. Functional Programming 1 The Essence of the Iterator Pattern Jeremy Gibbons and Bruno C. d. S. Oliveira Oxford University Computing Laboratory Wolfson Building, Parks Road, Oxford OX1 3QD, UK http://www
-author = dvips(k) 5.96 Copyright 2005 Radical Eye Software
-caption = iterator.dvi
-dbytes = 66981
-fbytes = 173774
-filename = iterator.pdf
-fmtime = 01436217058
-mtime = 01436217058
-mtype = application/pdf
-origcharset = UTF-8
-pcbytes = 173774
-rcludi = /home/k/doc/books/fp/iterator.pdf|
-relevancyrating =  66%
-sig = 1737741444416662
-title = iterator.dvi
-url = file:///home/k/doc/books/fp/iterator.pdf
-  "
-
-let testInput3 =
-  @"
-Recoll query: ((monad:(wqf=11) OR monads OR monadic OR monadically OR monadicity OR monadized))
-1 results (printing  1 max):
-text/plain	[file:///home/k/doc/nixconf/sample/src/PaperScraper/Recoll.fs]	[Recoll.fs]	4890	bytes	
-abstract = [<AutoOpen>] module PaperScraper.Recoll (* recollq: usage:  -P: Shw the date span for all the documents present in the index  [-o|-a|-f] [-q] <query string>  Runs a recoll query and displays result lines.    Default: will interpret the argument(s)
-dbytes = 4890
-fbytes = 4890
-filename = Recoll.fs
-fmtime = 01446155658
-mtime = 01446155658
-mtype = text/plain
-origcharset = UTF-8
-pcbytes = 4890
-rcludi = /home/k/doc/nixconf/sample/src/PaperScraper/Recoll.fs|
-relevancyrating = 100%
-sig = 48901446155658
-title = 
-url = file:///home/k/doc/nixconf/sample/src/PaperScraper/Recoll.fs
-  "
 
 let executeProcess (exe,cmdline) =
   let psi = new System.Diagnostics.ProcessStartInfo(exe,cmdline) 
@@ -249,4 +175,4 @@ let queryRecoll term =
   let raw = executeProcess (binpath, sprintf "-t -o -m -q %s" term)
   if fst raw = 0
   then parseOutput (snd raw)
-  else failwith "command failed"
+  else failwith "running recoll failed"
