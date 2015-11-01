@@ -25,7 +25,6 @@ open PaperScraper.Recoll
 *)
 
 let proc (req : HttpRequest) =
-  printfn "%s" <| (req.query).ToString()
   match (List.tryFind (fst >> (=) "term") req.query) with
     | Some(_, v) ->
       match v with
