@@ -88,24 +88,6 @@ let searchResult : Parser<Row,unit> =
         (skipTo urlLine)
         mkRow
 
-// let searchResult : Parser<SearchResult, unit> =
-//   skipLine >>.  // header line
-//     abstractLine >>= fun abstrct ->
-//       skipManyTill skipLine
-//       <| filenameLine >>= fun fname -> 
-//         skipManyTill skipLine
-//         <| mtypeLine >>= fun mime -> 
-//              charsetLine >>= fun charset ->
-//                skipManyTill skipLine
-//                <| urlLine >>= fun url ->
-//                     preturn { Abstract = abstrct
-//                             ; FileName = fname
-//                             ; MimeType = mime
-//                             ; CharSet = charset
-//                             ; Url = url
-//                             }
-//                       .>> skipRestOfLine consume
-
 let mkResult query count results =
   { Query = query
   ; Count = count

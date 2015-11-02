@@ -563,6 +563,86 @@ let skipTo p =
 
 *****
 
+#### Putting it all together
+
+```{.fsharp .fragment}
+let searchResult : Parser<Row, unit> =
+  (skipTo abstractLine) >>= fun a ->
+  (skipTo filenameLine) >>= fun f ->
+  (skipTo mtypeLine)    >>= fun m ->
+  (skipTo charsetLine)  >>= fun c ->
+  (skipTo urlLine)      >>= fun u ->
+  preturn { Abstract = a
+          ; FileName = f
+          ; MimeType = m
+          ; CharSet  = c
+          ; Url      = u }
+```
+
+*****
+
+#### Better™!
+
+```{.fsharp .fragment}
+let searchResult : Parser<Row,unit> =
+  pipe5 (skipTo abstractLine)
+        (skipTo filenameLine)
+        (skipTo mtypeLine)
+        (skipTo charsetLine)
+        (skipTo urlLine)
+        mkRow // where mkRow is simply a function that constructs the value (lifting is automatic)
+```
+
+*****
+
+#### The Final Parser:
+
+```{.fsharp .fragment}
+let recollOutput : Parser<QueryResult, unit> =
+  queryLine >>= fun q ->
+  totalLine >>= fun c ->
+  (parray (int(c)) searchResult) >>= fun rows ->  // we know the number of results!
+  preturn (mkResult q c rows)
+```
+
+<div class="notes">
+- parray is easiest and clean in this case
+- `many` might also work
+- interrupt the backtracking loop
+</div>
+
+*****
+
+#### Testing The Parser
+
+```{.fsharp}
+let parseOutput str =
+  match run recollOutput str with
+    | Success(res, _, _) -> res
+    | Failure(msg, _, _) -> failwith msg
+```
+
+*****
+
+#### Using The Real Thing
+
+```{.fsharp}
+let queryRecoll term =
+  let binpath = "/run/current-system/sw/bin/recoll"
+  let raw = executeProcess (binpath, sprintf "-t -o -m -q %s" term)
+  if fst raw = 0
+  then parseOutput (snd raw)
+  else failwith "running recoll failed"
+```
+
+*****
+
+## HOORAY!
+
+![](img/wabbit.gif)
+
+*****
+
 ## Suave.IO
 
 > Suave is a simple web development F# library providing a lightweight web
