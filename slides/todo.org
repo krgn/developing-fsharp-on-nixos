@@ -11,4 +11,7 @@
 *** IN IDEA paket integration
     writing a paket extension that can output nix expressions for a paket.lock file
     to automate creating the dependencies for a given package
+    
+    this could also first be simply a script or small fsharp program (does paket
+    come with a library?)
 

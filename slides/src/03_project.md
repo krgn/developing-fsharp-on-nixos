@@ -238,6 +238,7 @@ It would be better to use the F# version shipped with NixOS.
 ```
 
 ```{.fragment}
+  <Private>True</Private>
   <HintPath>$(TargetFSharpCorePath)</HintPath>
 ```
 
@@ -265,11 +266,10 @@ http://stackoverflow.com/questions/20332046/correct-version-of-fsharp-core
 
 *****
 
-#### Documentation and Help Targets
+#### Documentation? 
 
-They do not build at this point, for the same reasons.
-
-TODO: improve this slide
+Both documentation and help targets don't build at this point as F# script files
+reference _DLLs_ directly by path.
 
 *****
 
@@ -299,10 +299,13 @@ so we need to comment it and the code in _Tests.fs_ out to ensure a clean build.
 
 ## Phew!
 
+![](img/phew.png)
 
 *****
 
 ## Recoll
+
+***** 
 
 > - full-text search tool 
 > - uses xapian underneath (like other great tools, e.g. `notmuch` and `mu`)
@@ -348,6 +351,132 @@ Recoll query: (XSFSburrito_monads.pdf)
 1 results
 application/pdf	[file:///home/k/doc/books/burrito_monads.pdf]	[burrito_monads.pdf]	74745	bytes	
 ```
+
+*****
+
+## So, parsing anyone?
+
+*****
+
+## FParsec to the rescue!
+
+*****
+
+> - parser-combinator libary modeled after Parsec 
+> - a Parser is a function from some input to a possible result
+
+```{.fragment}
+type Parser<'a, 'u> = CharStream<'u> -> Reply<'a>
+```
+> - combinators (higher-order functions) compose to form new parsers
+> - conditional parsers (<|>)
+> - lookahead parsers that don't consume the input 
+> - FIXME: some more examples?
+
+*****
+
+#### 1k words worth of examples:
+
+```{.fragment}
+// a function to narrow down the selection of admissible characters
+
+let plainChar (c : char) = 
+  let chars = ['a'..'z']
+  let pred c' = c' = c 
+  match List.tryFind pred chars with
+    | Some(_) -> true
+    | _       -> false
+```
+
+```{.fragment}
+// now use our char-validator to explain that we're interested in _many_ matches
+
+let plainChars : Parser<string, unit> = 
+  manySatisfy plainChar
+```
+
+<div class="notes">
+- there is a more concise way to do this, but it its a good example nonetheless
+</div>
+
+*****
+
+A mime-type string as seen in our output is a sequence of plain characters
+separated by a slash, followed by some more plain characters.
+
+```
+application/pdf ....
+```
+
+```{.fragment}
+let mimeType : Parser<string, unit> =
+  plainChars  >>= fun res1 ->
+  pstring "/" >>= fun _    ->
+  plainChars  >>= fun res2 ->
+  preturn (res1+"/"+res2)
+```
+
+<div notes="class">
+- this is not actually a valid media type parser at all
+- there are media types with +.- and numbers
+- good enough for now
+</div>
+
+*****
+
+## Defining The Models
+
+***** 
+
+#### A query result: 
+
+> - begins with the query issued, followed by
+> - a line containing the number of matching items, followed by
+> - none or many results
+
+*****
+
+#### A Result "Row":
+
+> - begins with an abstract, eventually followed by a
+> - file name line, eventually followed by a
+> - mime type line, eventually followed by a
+> - character set line, eventually followed by a
+> - url line 
+
+<div class="notes">
+- only interested in a few fields
+- parser needs to test and skip ahead to the next relevant line
+- expects at least this set of lines in this order
+</div>
+
+*****
+
+#### QueryResult:
+
+```{.fsharp}
+type QueryResult =
+  { Query : QueryString // alias for `string`
+  ; Count : int64
+  ; Rows  : Row array
+  }
+  with
+    static member empty =
+      { Query = ""
+      ; Count = 0L
+      ; Rows  = Array.empty
+      }
+```
+
+*****
+
+#### Result Row:
+
+```{.fsharp}
+
+```
+
+*****
 
 ## Suave.IO
 
