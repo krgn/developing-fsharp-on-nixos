@@ -360,6 +360,8 @@ application/pdf	[file:///home/k/doc/books/burrito_monads.pdf]	[burrito_monads.pd
 
 ## FParsec to the rescue!
 
+> - I ♥ parsers 
+
 *****
 
 > - parser-combinator libary modeled after Parsec 
@@ -473,7 +475,90 @@ type QueryResult =
 #### Result Row:
 
 ```{.fsharp}
+type Row =
+  { Abstract : string
+  ; FileName : FileName
+  ; MimeType : MimeType
+  ; CharSet  : CharSet
+  ; Url      : Url
+  }
+```
 
+*****
+
+#### Query Line:
+
+```{.fsharp}
+let queryLine : Parser<string, unit> =
+  pstring "Recoll query:" >>. restOfLine true
+```
+
+*****
+
+#### Count line
+
+```{.fsharp}
+let totalLine : Parser<int64, unit> =
+  pint64 .>> skipRestOfLine consume
+```
+
+<div class="notes">
+- not using -n to restrict num rows so parser is simple
+</div>
+
+*****
+
+#### Result Row:
+
+```{.fsharp}
+let abstractLine : Parser<string, unit> =
+  pstring "abstract = " >>. restOfLine true
+
+```
+
+```{.fsharp .fragment}
+let filenameLine : Parser<FileName, unit> =
+  pstring "filename = " >>. restOfLine true
+  
+```
+
+```{.fsharp .fragment}
+let mtypeLine : Parser<MimeType, unit> =
+  pstring "mtype = " >>. mimeType .>> skipRestOfLine consume
+```
+
+***** 
+
+```{.fsharp}
+// a little example of `active patters`
+
+let (|CharSetLit|_|) (prefix : string) (str : string) =
+  if str.StartsWith(prefix)
+  then Some(str.Substring(prefix.Length))
+  else None
+
+let charsetLine : Parser<CharSet,unit> =
+  pstring "origcharset = " >>. 
+  restOfLine consume >>= fun str ->
+    match str with
+      | CharSetLit "UTF-8" _  -> UTF8
+      | CharSetLit "UTF-16" _ -> UTF16
+      | s                     -> UnknownCharset s
+    |> preturn
+    .>> skipRestOfLine consume
+```
+
+*****
+
+```{.fsharp}
+let urlLine : Parser<Url, unit> =
+  pstring "url = " >>. restOfLine consume
+```
+
+```{.fsharp .fragment}
+// skip ahead to the next matching line
+let skipTo p =
+  skipManyTill (restOfLine true) (lookAhead p) >>. p
 ```
 
 *****
