@@ -299,7 +299,6 @@ so we need to comment it and the code in _Tests.fs_ out to ensure a clean build.
 
 ## Phew!
 
-![](img/phew.png)
 
 *****
 

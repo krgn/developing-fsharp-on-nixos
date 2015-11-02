@@ -2,5 +2,13 @@
 
 * TODO:
 *** IN explore containers and how to deploy to them               :important:
+*** IN notes NUR stichworte nicht ablesen
+*** IN WITZ AM ANFANG
+*** IN TWITTER MSG am ende
+*** IN TWITTER HANDLE + TITLE
 *** IN highlight.js integration                                      :pretty:
 *** IN emacs-helm integration                                 :would:be:nice:
+*** IN IDEA paket integration
+    writing a paket extension that can output nix expressions for a paket.lock file
+    to automate creating the dependencies for a given package
+
