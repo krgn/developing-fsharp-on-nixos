@@ -8,10 +8,61 @@
 *** IN TWITTER HANDLE + TITLE
 *** IN highlight.js integration                                      :pretty:
 *** IN emacs-helm integration                                 :would:be:nice:
-*** IN IDEA paket integration
+*** DONE IDEA paket integration
+    
+    `paket2nix`
+
     writing a paket extension that can output nix expressions for a paket.lock file
     to automate creating the dependencies for a given package
     
     this could also first be simply a script or small fsharp program (does paket
     come with a library?)
+*** IN ISSUES WITH FSHARP
+    
+    krgn | obadz: lucky! thats cool                                                                                           
+   obadz | krgn: yes F# on Linux is a permanent struggle despite what all the cool kids are saying                            
+  vcunat | codehero: we push security stuff directly, typically, so it should get all rebuilt in about a week                 
+    krgn | obadz: so far I have not run into serious bug tbh, and its been quite a while already                              
+   obadz | krgn: I ran out of steam to keep pushing uphill but most importantly the Mono runtime crashes are quite scary      
+codehero | vcunat: true, but sometimes months go by without updates                                                           
+   obadz | krgn: because there's no easy way to debug them etc.                                                               
+  vcunat | yeah, e.g. if some tests are failing, the channel won't get updated                                                
+   obadz | krgn: https://github.com/fsharp/FSharp.Data/issues/762                                                             
+      -- | Notice(NixOS_GitHub): [nixpkgs] devhell opened pull request #10868: ipfs: Disable building with Go 1.4             
+         | (master...ipfs) http://git.io/v8CSK                                                                                
+      -- | Notice(NixOS_GitHub): [nixpkgs] vcunat pushed 1 new commit to master: http://git.io/v8CSi                          
+      -- | Notice(NixOS_GitHub): nixpkgs/master 34eb56e Raymond Gauthier: mousepad: fix the `Using the 'memory' GSettings     
+         | backend` issue....                                                                                                 
+   obadz | krgn: https://bugzilla.xamarin.com/show_bug.cgi?id=30979                                                           
+      -- | Notice(NixOS_GitHub): [nixpkgs] vcunat closed pull request #10867: mousepad: fix the `Using the 'memory' GSettings 
+         | backend` issue. (release-15.09...jrg/fix_mousepad_missing_dconf_dependendcy) http://git.io/v8Cit                   
+    krgn | obadz: yes, that second one happedned to me too                                                                    
+    krgn | obadz: but its a matter of shipping FSharp.Core                                                                    
+    krgn | which is recommended anyways                                                                                       
+    krgn | but yeah                                                                                                           
+      -- | Notice(NixOS_GitHub): [nixpkgs] vcunat pushed 1 new commit to release-15.09: http://git.io/v8C93                   
+      -- | Notice(NixOS_GitHub): nixpkgs/release-15.09 57816df Raymond Gauthier: mousepad: fix the `Using the 'memory'        
+         | GSettings backend` issue....                                                                                       
+    krgn | nasty nasty crash                                                                                                  
+    krgn | :)P                                                                                                                
+   obadz | krgn: https://github.com/fsharp/fsharp/issues/426#issue-90449550                                                   
+    krgn | ouf                                                                                                                
+    krgn | :(                                                                                                                 
+   obadz | krgn: and then I had a 4th one where the runtime in which FsAutocomplete was running blew up                       
+   obadz | krgn: that's when I just gave up                                                                                   
+    krgn | obadz: fair enough...                                                                                              
+   obadz | krgn: all these repros take a while to build. The community is very supportive but there's just too few users on   
+         | Linux...                                                                                                           
+   obadz | krgn: the fact that you couldn't do an HTTP get with FSharp.Data on Linux without triggering a deadlock shows how  
+         | few users there must be.                                                                                           
+    krgn | obadz: I'll make sure I mention this as well                                                                       
+    krgn | :(                                                                                                                  
+   obadz | krgn: and then I had a 4th one where the runtime in which FsAutocomplete was running blew up                        
+   obadz | krgn: that's when I just gave up                                                                                    
+    krgn | obadz: fair enough...                                                                                               
+   obadz | krgn: all these repros take a while to build. The community is very supportive but there's just too few users on    
+         | Linux...                                                                                                            
+   obadz | krgn: the fact that you couldn't do an HTTP get with FSharp.Data on Linux without triggering a deadlock shows how   
+         | few users there must be.                                                                                            
 
+    https://github.com/fsharp/fsharp/issues/426#issue-90449550
