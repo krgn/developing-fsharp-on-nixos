@@ -479,7 +479,8 @@ FSharp.Core</code></pre>
 <h4 id="a-better-fix">A Better™ Fix:</h4>
 <p>It would be better to use the F# version shipped with NixOS.</p>
 <pre class="fragment"><code>  &lt;TargetFSharpCoreVersion&gt;4.3.1.0&lt;/TargetFSharpCoreVersion&gt;</code></pre>
-<pre class="fragment"><code>  &lt;HintPath&gt;$(TargetFSharpCorePath)&lt;/HintPath&gt;</code></pre>
+<pre class="fragment"><code>  &lt;Private&gt;True&lt;/Private&gt;
+  &lt;HintPath&gt;$(TargetFSharpCorePath)&lt;/HintPath&gt;</code></pre>
 <pre class="shell fragment"><code>→ set -x TargetFSharpCorePath (dirname (which fsharpc))/../lib/mono/4.5/FSharp.Core.dll</code></pre>
 <pre class="shell fragment"><code>{ config, pkgs, ... }:
 {
@@ -499,9 +500,8 @@ FSharp.Core</code></pre>
 <p>http://stackoverflow.com/questions/20332046/correct-version-of-fsharp-core</p>
 </section><section class="slide level2">
 
-<h4 id="documentation-and-help-targets">Documentation and Help Targets</h4>
-<p>They do not build at this point, for the same reasons.</p>
-<p>TODO: improve this slide</p>
+<h4 id="documentation">Documentation?</h4>
+<p>Both documentation and help targets don't build at this point as F# script files reference <em>DLLs</em> directly by path.</p>
 </section><section class="slide level2">
 
 <h4 id="but-were-building-an-executable-right">But we're building an executable, right?!</h4>
@@ -562,6 +562,224 @@ url = file:///home/k/doc/books/burrito_monads.pdf</code></pre>
 Recoll query: (XSFSburrito_monads.pdf)
 1 results
 application/pdf [file:///home/k/doc/books/burrito_monads.pdf]   [burrito_monads.pdf]    74745   bytes   </code></pre>
+</section><section id="so-parsing-anyone" class="slide level2">
+<h1>So, parsing anyone?</h1>
+</section><section id="fparsec-to-the-rescue" class="slide level2">
+<h1>FParsec to the rescue!</h1>
+<ul>
+<li class="fragment">I ♥ parsers</li>
+</ul>
+</section><section class="slide level2">
+
+<ul>
+<li class="fragment">parser-combinator libary modeled after Parsec</li>
+<li class="fragment">a Parser is a function from some input to a possible result</li>
+</ul>
+<pre class="fragment"><code>type Parser&lt;&#39;a, &#39;u&gt; = CharStream&lt;&#39;u&gt; -&gt; Reply&lt;&#39;a&gt;</code></pre>
+<ul>
+<li class="fragment">combinators (higher-order functions) compose to form new parsers</li>
+<li class="fragment">conditional parsers (&lt;|&gt;)</li>
+<li class="fragment">lookahead parsers that don't consume the input</li>
+<li class="fragment">FIXME: some more examples?</li>
+</ul>
+</section><section class="slide level2">
+
+<h4 id="k-words-worth-of-examples">1k words worth of examples:</h4>
+<pre class="fragment"><code>// a function to narrow down the selection of admissible characters
+
+let plainChar (c : char) = 
+  let chars = [&#39;a&#39;..&#39;z&#39;]
+  let pred c&#39; = c&#39; = c 
+  match List.tryFind pred chars with
+    | Some(_) -&gt; true
+    | _       -&gt; false</code></pre>
+<pre class="fragment"><code>// now use our char-validator to explain that we&#39;re interested in _many_ matches
+
+let plainChars : Parser&lt;string, unit&gt; = 
+  manySatisfy plainChar</code></pre>
+<aside class="notes">
+<ul>
+<li>there is a more concise way to do this, but it its a good example nonetheless</li>
+</ul>
+</aside>
+</section><section class="slide level2">
+
+<p>A mime-type string as seen in our output is a sequence of plain characters separated by a slash, followed by some more plain characters.</p>
+<pre><code>application/pdf ....</code></pre>
+<pre class="fragment"><code>let mimeType : Parser&lt;string, unit&gt; =
+  plainChars  &gt;&gt;= fun res1 -&gt;
+  pstring &quot;/&quot; &gt;&gt;= fun _    -&gt;
+  plainChars  &gt;&gt;= fun res2 -&gt;
+  preturn (res1+&quot;/&quot;+res2)</code></pre>
+<div notes="class">
+<ul>
+<li>this is not actually a valid media type parser at all</li>
+<li>there are media types with +.- and numbers</li>
+<li>good enough for now</li>
+</ul>
+</div>
+</section><section id="defining-the-models" class="slide level2">
+<h1>Defining The Models</h1>
+</section><section class="slide level2">
+
+<h4 id="a-query-result">A query result:</h4>
+<ul>
+<li class="fragment">begins with the query issued, followed by</li>
+<li class="fragment">a line containing the number of matching items, followed by</li>
+<li class="fragment">none or many results</li>
+</ul>
+</section><section class="slide level2">
+
+<h4 id="a-result-row">A Result &quot;Row&quot;:</h4>
+<ul>
+<li class="fragment">begins with an abstract, eventually followed by a</li>
+<li class="fragment">file name line, eventually followed by a</li>
+<li class="fragment">mime type line, eventually followed by a</li>
+<li class="fragment">character set line, eventually followed by a</li>
+<li class="fragment">url line</li>
+</ul>
+<aside class="notes">
+<ul>
+<li>only interested in a few fields</li>
+<li>parser needs to test and skip ahead to the next relevant line</li>
+<li>expects at least this set of lines in this order</li>
+</ul>
+</aside>
+</section><section class="slide level2">
+
+<h4 id="queryresult">QueryResult:</h4>
+<pre class="fsharp"><code>type QueryResult =
+  { Query : QueryString // alias for `string`
+  ; Count : int64
+  ; Rows  : Row array
+  }
+  with
+    static member empty =
+      { Query = &quot;&quot;
+      ; Count = 0L
+      ; Rows  = Array.empty
+      }</code></pre>
+</section><section class="slide level2">
+
+<h4 id="result-row">Result Row:</h4>
+<pre class="fsharp"><code>type Row =
+  { Abstract : string
+  ; FileName : FileName
+  ; MimeType : MimeType
+  ; CharSet  : CharSet
+  ; Url      : Url
+  }</code></pre>
+</section><section class="slide level2">
+
+<h4 id="query-line">Query Line:</h4>
+<pre class="fsharp"><code>let queryLine : Parser&lt;string, unit&gt; =
+  pstring &quot;Recoll query:&quot; &gt;&gt;. restOfLine true</code></pre>
+</section><section class="slide level2">
+
+<h4 id="count-line">Count line</h4>
+<pre class="fsharp"><code>let totalLine : Parser&lt;int64, unit&gt; =
+  pint64 .&gt;&gt; skipRestOfLine consume</code></pre>
+<aside class="notes">
+<ul>
+<li>not using -n to restrict num rows so parser is simple</li>
+</ul>
+</aside>
+</section><section class="slide level2">
+
+<h4 id="result-row-1">Result Row:</h4>
+<pre class="fsharp"><code>let abstractLine : Parser&lt;string, unit&gt; =
+  pstring &quot;abstract = &quot; &gt;&gt;. restOfLine true
+</code></pre>
+<pre class="fsharp fragment"><code>let filenameLine : Parser&lt;FileName, unit&gt; =
+  pstring &quot;filename = &quot; &gt;&gt;. restOfLine true
+  </code></pre>
+<pre class="fsharp fragment"><code>let mtypeLine : Parser&lt;MimeType, unit&gt; =
+  pstring &quot;mtype = &quot; &gt;&gt;. mimeType .&gt;&gt; skipRestOfLine consume</code></pre>
+</section><section class="slide level2">
+
+<pre class="fsharp"><code>// a little example of `active patters`
+
+let (|CharSetLit|_|) (prefix : string) (str : string) =
+  if str.StartsWith(prefix)
+  then Some(str.Substring(prefix.Length))
+  else None
+
+let charsetLine : Parser&lt;CharSet,unit&gt; =
+  pstring &quot;origcharset = &quot; &gt;&gt;. 
+  restOfLine consume &gt;&gt;= fun str -&gt;
+    match str with
+      | CharSetLit &quot;UTF-8&quot; _  -&gt; UTF8
+      | CharSetLit &quot;UTF-16&quot; _ -&gt; UTF16
+      | s                     -&gt; UnknownCharset s
+    |&gt; preturn
+    .&gt;&gt; skipRestOfLine consume</code></pre>
+</section><section class="slide level2">
+
+<pre class="fsharp"><code>let urlLine : Parser&lt;Url, unit&gt; =
+  pstring &quot;url = &quot; &gt;&gt;. restOfLine consume</code></pre>
+<pre class="fsharp fragment"><code>// skip ahead to the next matching line
+let skipTo p =
+  skipManyTill (restOfLine true) (lookAhead p) &gt;&gt;. p</code></pre>
+</section><section class="slide level2">
+
+<h4 id="putting-it-all-together">Putting it all together</h4>
+<pre class="fsharp fragment"><code>let searchResult : Parser&lt;Row, unit&gt; =
+  (skipTo abstractLine) &gt;&gt;= fun a -&gt;
+  (skipTo filenameLine) &gt;&gt;= fun f -&gt;
+  (skipTo mtypeLine)    &gt;&gt;= fun m -&gt;
+  (skipTo charsetLine)  &gt;&gt;= fun c -&gt;
+  (skipTo urlLine)      &gt;&gt;= fun u -&gt;
+  preturn { Abstract = a
+          ; FileName = f
+          ; MimeType = m
+          ; CharSet  = c
+          ; Url      = u }</code></pre>
+</section><section class="slide level2">
+
+<h4 id="better">Better™!</h4>
+<pre class="fsharp fragment"><code>let searchResult : Parser&lt;Row,unit&gt; =
+  pipe5 (skipTo abstractLine)
+        (skipTo filenameLine)
+        (skipTo mtypeLine)
+        (skipTo charsetLine)
+        (skipTo urlLine)
+        mkRow // where mkRow is simply a function that constructs the value (lifting is automatic)</code></pre>
+</section><section class="slide level2">
+
+<h4 id="the-final-parser">The Final Parser:</h4>
+<pre class="fsharp fragment"><code>let recollOutput : Parser&lt;QueryResult, unit&gt; =
+  queryLine &gt;&gt;= fun q -&gt;
+  totalLine &gt;&gt;= fun c -&gt;
+  (parray (int(c)) searchResult) &gt;&gt;= fun rows -&gt;  // we know the number of results!
+  preturn (mkResult q c rows)</code></pre>
+<aside class="notes">
+<ul>
+<li>parray is easiest and clean in this case</li>
+<li><code>many</code> might also work</li>
+<li>interrupt the backtracking loop</li>
+</ul>
+</aside>
+</section><section class="slide level2">
+
+<h4 id="testing-the-parser">Testing The Parser</h4>
+<pre class="fsharp"><code>let parseOutput str =
+  match run recollOutput str with
+    | Success(res, _, _) -&gt; res
+    | Failure(msg, _, _) -&gt; failwith msg</code></pre>
+</section><section class="slide level2">
+
+<h4 id="using-the-real-thing">Using The Real Thing</h4>
+<pre class="fsharp"><code>let queryRecoll term =
+  let binpath = &quot;/run/current-system/sw/bin/recoll&quot;
+  let raw = executeProcess (binpath, sprintf &quot;-t -o -m -q %s&quot; term)
+  if fst raw = 0
+  then parseOutput (snd raw)
+  else failwith &quot;running recoll failed&quot;</code></pre>
+</section><section id="hooray" class="slide level2">
+<h1>HOORAY!</h1>
+<figure>
+<img src="img/wabbit.gif" alt="" />
+</figure>
 </section><section id="suave.io" class="slide level2">
 <h1>Suave.IO</h1>
 <blockquote>
@@ -696,37 +914,159 @@ type SearchResult =
 
 <h5 id="section"></h5>
 </section></section>
-<section><section id="deployment" class="titleslide slide level1"><h1>Deployment</h1></section><section id="writing-a-derivation" class="slide level2">
-<h1>Writing a derivation</h1>
-<pre><code>→ export FSharpTargetsPath=&quot;${fsharp}/lib/mono/4.5/Microsoft.FSharp.Targets&quot;</code></pre>
-<aside class="notes">
+<section><section id="deployment" class="titleslide slide level1"><h1>Deployment</h1></section><h4 id="deployment-1">Deployment</h4><section class="slide level2">
 
-</aside>
-</section><section id="systemd-services" class="slide level2">
-<h1>Systemd services</h1>
-<ul>
-<li class="fragment">need a service for the api server</li>
-<li class="fragment">need a timer and service for recollindexer</li>
-</ul>
-<aside class="notes">
-
-</aside>
+<h4 id="creating-a-package">Creating A Package*</h4>
+<p>(* or Derivation in Nix-lingo)</p>
 </section><section class="slide level2">
 
+<h4 id="the-impure-way">The <em>Impure</em> way</h4>
+<pre><code>with import &lt;nixpkgs&gt; {};
+with lib;
+
+
+stdenv.mkDerivation {
+  name = &quot;paperscraper-$version&quot;;
+
+  version = &quot;0.0.1&quot;;
+
+  src = fetchurl {
+    url = &quot;https://github.com/krgn/PaperScraper/tarball/6a8e0d29c90844fa18665278f5dd1fb96537d70&quot;;
+    sha256 = &quot;0l2jchn4p9bj157h94l6gi8ca3hafyacx5809nv9ssvhlk00ps87&quot;;
+  };
+
+  buildInputs = [ fsharp mono curl strace ];
+
+  phases = [ &quot;unpackPhase&quot; &quot;buildPhase&quot; &quot;installPhase&quot; ];
+
+  buildPhase = &#39;&#39;
+    patchShebangs .
+    build.sh
+  &#39;&#39;;
+
+  installPhase = &#39;&#39;
+    mkdir -p &quot;$out/bin&quot; &quot;$out/lib/mono/packages/$name&quot;
+
+    cp -r &quot;bin/PaperScraper&quot; &quot;$out/lib/mono/packages/$name/&quot;
+
+    cat &gt;&gt; &quot;$out/bin/PaperScraper&quot; &lt;&lt;-WRAPPER
+    #!/bin/sh
+    ${mono}/bin/mono $out/lib/PaperScraper/PaperScraper.exe
+    WRAPPER
+
+    chmod +x &quot;$out/bin/PaperScraper&quot;
+  &#39;&#39;;
+
+  meta = {
+    description = &quot;its a service!&quot;;
+    homepage = &quot;https://github.com/krgn/PaperScraper&quot;;
+  };
+}</code></pre>
+</section><section class="slide level2">
+
+<p>Install it!</p>
+<pre><code>$ nix-env -i -f paperscraper.nix</code></pre>
+</section><section id="oh-no" class="slide level2">
+<h1>OH NO!</h1>
+</section><section id="of-course-in-nix-clocks-tick-differently." class="slide level2">
+<h1>Of course! In Nix, clocks tick differently.</h1>
+<aside class="notes">
 <ul>
-<li class="fragment">sending a closure</li>
-<li class="fragment">container?</li>
+<li>there is resolv.conf in the chroot/sandbox, so no network</li>
+<li>no paket and no nuget</li>
+<li>tl;dr it doestn't work</li>
 </ul>
-<aside class="notes">
-
 </aside>
-</section><section id="docker-container" class="slide level2">
-<h1>Docker container????</h1>
-</section><section id="trying-it-out" class="slide level2">
-<h1>Trying it out</h1>
-<aside class="notes">
+</section><section id="the-solution" class="slide level2">
+<h1>THE SOLUTION</h1>
+<ul>
+<li class="fragment">lift nuget packages into the store</li>
+<li class="fragment">link packages into the packages directory</li>
+</ul>
+</section><section id="introducint-paket2nix" class="slide level2">
+<h1>INTRODUCINT PAKET2NIX</h1>
+</section><section id="nix-yfying-the-project" class="slide level2">
+<h1>NIX-YFYING THE PROJECT</h1>
+<pre><code>cd /path/to/project/
+Paket2Nix</code></pre>
+<p>Thats it. The <code>nix</code> directory now contains a top-level expression <code>top.nix</code> which you can use to build the package and all other expressions.</p>
+</section><section id="building" class="slide level2">
+<h1>BUILDING</h1>
+<pre><code>➜  nix git:(master) ✗ nix-build top.nix -A PaperScraper</code></pre>
+<p>will at this point produce:</p>
+<pre><code>➜  nix git:(master) ✗ nix-build top.nix -A PaperScraper
 
-</aside>
+/nix/store/328ccq2dw1dq8i0dlmlzf0iknb1pad28-paperscraper-0.0.1</code></pre>
+<p>which we can install into our environment</p>
+<pre><code>➜  nix git:(master) ✗ nix-env -i -f ./top.nix -A PaperScraper
+replacing old ‘paperscraper-0.0.1’
+installing ‘paperscraper-0.0.1’
+building path(s) ‘/nix/store/0d4vh1vaw41v3xn9vq66yydck142z02d-user-environment’
+created 19003 symlinks in user environment</code></pre>
+</section><section id="deploying-system-wide" class="slide level2">
+<h1>Deploying system-wide</h1>
+</section><section id="mention-hydra" class="slide level2">
+<h1>mention hydra</h1>
+</section><section id="package-up-our-expressions" class="slide level2">
+<h1>package up our expressions</h1>
+<p><code>echo &quot;import ./top.nix&quot; &gt;&gt; nix/default.nix    tar cjvf nixexprs.tar.bz2 nix/    mkdir -p ~/tmp/mycache    mv nixexprs.tar.bz2 ~/tmp/mycache</code></p>
+</section><section id="create-a-simple-cache-for-our-expressions" class="slide level2">
+<h1>create a simple cache for our expressions</h1>
+<p><code>cd ~/tmp/mycache    nix-push --dest . --manifest /nix/store/328ccq2dw1dq8i0dlmlzf0iknb1pad28-paperscraper-0.0.1/</code> creates a binary cache of all expressions</p>
+</section><section id="using-the-channel" class="slide level2">
+<h1>using the channel</h1>
+<p>``` nix-channel --add file:///home/k/tmp/mycache krgn nix-channel --update</p>
+<p>nix-env -qaP | grep -i PaperScraper krgn.PaperScraper paperscraper-0.0.1 ``` ## creating a custom module</p>
+<pre><code>{config, pkgs, lib, ...}:
+
+let
+  cfg = config.services.paperscraper;
+  krgn = import &lt;krgn&gt;;
+in
+
+with lib;
+
+{
+  options = {
+    services.paperscraper = {
+      enable = mkOption {
+        default = false;
+        type = with types; bool;
+        description = &#39;&#39;
+          Start the PaperScraper API service.
+        &#39;&#39;;
+      };
+
+      user = mkOption {
+        default = &quot;username&quot;;
+        type = with types; uniq string;
+        description = &#39;&#39;
+          Name of the user to run as.
+        &#39;&#39;;
+      };
+    };
+  };
+
+  config = mkIf cfg.enable {
+    jobs.paperscraper = {
+      description = &quot;Start the paperscraper service.&quot;;
+      startOn = &quot;started network-interfaces&quot;;
+      exec = &#39;&#39;/var/setuid-wrappers/sudo -u ${cfg.user} -- ${krgn.PaperScraper}/bin/PaperScraper&#39;&#39;;
+    };
+
+    environment.systemPackages = [ krgn.PaperScraper pkgs.recoll ];
+  };
+}</code></pre>
+<p>and import this in <code>configuration.nix</code></p>
+<pre><code>imports = [
+   ./services/paperscraper.nix
+  ]
+  
+...
+services.paperscraper = {
+  enable = true;
+  user = &quot;k&quot;;
+};</code></pre>
 </section></section>
 <section><section id="useful-resources" class="titleslide slide level1"><h1>Useful resources</h1></section></section>
     </div>

@@ -1,6 +1,103 @@
 # Deployment
 
-## Writing a derivation
+#### Deployment
+
+*****
+
+#### Creating A Package*
+
+(* or Derivation in Nix-lingo)
+
+*****
+
+#### The *Impure* way 
+
+```
+with import <nixpkgs> {};
+with lib;
+
+
+stdenv.mkDerivation {
+  name = "paperscraper-$version";
+
+  version = "0.0.1";
+
+  src = fetchurl {
+    url = "https://github.com/krgn/PaperScraper/tarball/6a8e0d29c90844fa18665278f5dd1fb96537d70";
+    sha256 = "0l2jchn4p9bj157h94l6gi8ca3hafyacx5809nv9ssvhlk00ps87";
+  };
+
+  buildInputs = [ fsharp mono curl strace ];
+
+  phases = [ "unpackPhase" "buildPhase" "installPhase" ];
+
+  buildPhase = ''
+    patchShebangs .
+    build.sh
+  '';
+
+  installPhase = ''
+    mkdir -p "$out/bin" "$out/lib/mono/packages/$name"
+
+    cp -r "bin/PaperScraper" "$out/lib/mono/packages/$name/"
+
+    cat >> "$out/bin/PaperScraper" <<-WRAPPER
+    #!/bin/sh
+    ${mono}/bin/mono $out/lib/PaperScraper/PaperScraper.exe
+    WRAPPER
+
+    chmod +x "$out/bin/PaperScraper"
+  '';
+
+  meta = {
+    description = "its a service!";
+    homepage = "https://github.com/krgn/PaperScraper";
+  };
+}
+```
+
+*****
+
+Install it!
+
+```
+$ nix-env -i -f paperscraper.nix
+```
+
+*****
+
+#### OH NO!
+
+*****
+
+#### Of course! In Nix, clocks tick differently.
+
+> - purity!
+> - i.e. not network, k?
+> - no paket! no nuget!
+
+<div class="notes">
+* there is resolv.conf in the chroot/sandbox, so no network
+* no paket and no nuget
+* tl;dr it doestn't work
+</div>
+
+*****
+
+#### The (obvious) solution
+
+> - lift nuget packages into the store
+> - link packages into the packages directory at build time
+> - disable nuget/paket
+> - use xbuild instead of FAKE
+
+*****
+
+#### Current Situation
+
+
+
+*****
 
 ## INTRODUCINT PAKET2NIX
 
