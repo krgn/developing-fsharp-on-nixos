@@ -163,50 +163,71 @@ which you can use to build the package and all other expressions.
 
 *****
 
-#### Building 
+#### Building
 
+```{.fragment}
+nix-build default.nix -A PaperScraper
 ```
-nix-build top.nix -A PaperScraper
-```
 
-will at this point produce: 
-
-```
-nix-build top.nix -A PaperScraper
-
+```{.fragment}
 /nix/store/328ccq2dw1dq8i0dlmlzf0iknb1pad28-paperscraper-0.0.1
 ```
 
-which we can install into our environment
+***** 
 
+#### Installing
+
+We can simply install the service into our user environment.
 
 ```
-➜  nix git:(master) ✗ nix-env -i -f ./top.nix -A PaperScraper
-replacing old ‘paperscraper-0.0.1’
-installing ‘paperscraper-0.0.1’
-building path(s) ‘/nix/store/0d4vh1vaw41v3xn9vq66yydck142z02d-user-environment’
-created 19003 symlinks in user environment
+nix-env -i -f ./default.nix -A PaperScraper
 ```
+
+*****
+
+#### Modules
+
+> - yay, declarative configuration!
+> - needs to "know" about our package
+> - system-wide (afaik)
+
+<div class="notes">
+* ask: are there other ways to use modules?
+* ask: user-modules?
+</div>
+
+*****
+
+#### Solution: Custom Binary Cache!
+
+```{.fragment}
+tar cjvf nixexprs.tar.bz2 nix/
+```
+
+```{.fragment}
+mkdir -p ~/tmp/mycache
+mv nixexprs.tar.bz2 ~/tmp/mycache
+```
+
+<div class="notes">
+* binary cache easily movable/hostable
+* more?
+</div>
+
+*****
 
 ## Deploying system-wide
   
 ## mention hydra
-## package up our expressions
-
-   ```
-   echo "import ./top.nix" >> nix/default.nix
-   tar cjvf nixexprs.tar.bz2 nix/
-   mkdir -p ~/tmp/mycache
-   mv nixexprs.tar.bz2 ~/tmp/mycache
-   ```
 
 ## create a simple cache for our expressions 
 
-   ```
-   cd ~/tmp/mycache
-   nix-push --dest . --manifest /nix/store/328ccq2dw1dq8i0dlmlzf0iknb1pad28-paperscraper-0.0.1/
-   ```
-   creates a binary cache of all expressions
+```
+cd ~/tmp/mycache
+nix-push --dest . --manifest /nix/store/328ccq2dw1dq8i0dlmlzf0iknb1pad28-paperscraper-0.0.1/
+```
+
+creates a binary cache of all expressions
    
 ## using the channel
    
