@@ -95,11 +95,36 @@ $ nix-env -i -f paperscraper.nix
 
 #### Current Situation
 
+> - some infrastructure exists (e.g. dotnetPackages)
+> - packages managed manually
+> - packaging from source is quite difficult
+> - no GAC, so dependencies are not found during development
 
+<div class="notes">
+* out of date
+* not many packages available
+* packaging is difficult, due to the same contraints as discovered
+</div>
 
 *****
 
-## INTRODUCINT PAKET2NIX
+#### Paket2Nix
+
+> - uses Paket metadata, the .lock file in particular
+> - discovers projects and their metadata
+> - generates Nix expressions for all dependencies project code (one per project)
+> - creates wrapper scripts for executables
+
+#### Motivation
+
+> - currently for Paket is the way to go for development
+> - solves common problems 
+
+<div class="notes">
+* 
+</div>
+
+*****
 
 ## NIX-YFYING THE PROJECT
   
