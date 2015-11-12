@@ -198,47 +198,7 @@ nix-env -i -f ./default.nix -A PaperScraper
 
 *****
 
-#### Solution: Custom Binary Cache!
-
-```{.fragment}
-tar cjvf nixexprs.tar.bz2 nix/
-```
-
-```{.fragment}
-mkdir -p ~/tmp/mycache
-mv nixexprs.tar.bz2 ~/tmp/mycache
-```
-
-<div class="notes">
-* binary cache easily movable/hostable
-* more?
-</div>
-
-*****
-
-## Deploying system-wide
-  
-## mention hydra
-
-## create a simple cache for our expressions 
-
-```
-cd ~/tmp/mycache
-nix-push --dest . --manifest /nix/store/328ccq2dw1dq8i0dlmlzf0iknb1pad28-paperscraper-0.0.1/
-```
-
-creates a binary cache of all expressions
-   
-## using the channel
-   
-   ```
-   nix-channel --add file:///home/k/tmp/mycache krgn
-   nix-channel --update
-
-   nix-env -qaP | grep -i PaperScraper
-   krgn.PaperScraper                                             paperscraper-0.0.1
-   ```
-## creating a custom module
+#### Creating a custom module
 
 ```
 {config, pkgs, lib, ...}:
@@ -251,6 +211,11 @@ in
 with lib;
 
 {
+```
+
+*****
+
+```
   options = {
     services.paperscraper = {
       enable = mkOption {
@@ -270,7 +235,11 @@ with lib;
       };
     };
   };
+```
 
+*****
+
+```
   config = mkIf cfg.enable {
     jobs.paperscraper = {
       description = "Start the paperscraper service.";
@@ -283,7 +252,9 @@ with lib;
 }
 ```
 
-and import this in `configuration.nix`
+*****
+
+Save somewhere and import in `configuration.nix`:
 
 
 ```
@@ -291,9 +262,92 @@ imports = [
    ./services/paperscraper.nix
   ]
   
-...
+
 services.paperscraper = {
   enable = true;
   user = "k";
 };
+```
+
+*****
+
+#### BUT!
+
+*****
+
+#### PaperScraper not found! :(
+
+(of course)
+
+*****
+
+#### (One) Solution: Custom Binary Cache!
+
+<div class="notes">
+* binary cache easily movable/hostable
+* mention hydra
+* more?
+</div>
+
+*****
+
+#### Simple cache
+
+```{.fragment}
+mkdir -p ~/tmp/mycache
+cd ~/tmp/mycache
+```
+
+```{.fragment}
+nix-push --dest . --manifest /nix/store/328ccq2dw1dq8i0dlmlzf0iknb1pad28-paperscraper-0.0.1/
+```
+
+<div class="notes">
+* creates a binary cache of all dependent expressions
+* creates a manifest
+* creates nar files (compressed archives)
+</div>
+
+*****
+
+#### Providing our Packages
+
+```{.fragment}
+tar cjvf nixexprs.tar.bz2 nix/
+```
+
+```{.fragment}
+mv nixexprs.tar.bz2 ~/tmp/mycache
+```
+  
+#### Using the channel
+   
+```{.fragment}
+nix-channel --add file:///home/k/tmp/mycache krgn
+nix-channel --update
+```
+
+```{.fragment}
+nix-env -qaP | grep -i PaperScraper
+krgn.PaperScraper                                             paperscraper-0.0.1
+```
+
+*****
+
+#### :D
+
+*****
+
+#### Deploying system-wide
+
+```{.fragment}
+nixos-rebuild switch --upgrade
+```
+
+```{.fragment}
+systemctl status paperscraper
+```
+
+```{.fragment}
+curl http://localhost:8083/search?term=monoid
 ```
