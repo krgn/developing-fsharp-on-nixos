@@ -117,35 +117,62 @@ $ nix-env -i -f paperscraper.nix
 
 #### Motivation
 
-> - currently for Paket is the way to go for development
-> - solves common problems 
+> - currently for Paket is the Way To Go™ for development
+> - solves common problems in .NET development (consistent dependency trees)
+> - integreate with Paket for maximum flexibility
 
 <div class="notes">
-* 
+* References in XML project files
+* inter-op with non-nix platforms
 </div>
 
 *****
 
-## NIX-YFYING THE PROJECT
-  
-```
+## Let's use it :)
+
+*****
+
+```{.fragment}
 cd /path/to/project/
+```
+
+```{.fragment}
 Paket2Nix
 ```
 
-Thats it. The `nix` directory now contains a top-level expression `top.nix`
+***** 
+
+> - download all dependencies
+> - checksums each dependency
+> - generates Nix derivations
+
+<div class="notes">
+* mention `master.tar.gz` limitation
+</div>
+
+*****
+
+#### Thats it!
+
+The `nix` directory now contains a top-level expression `default.nix`
 which you can use to build the package and all other expressions.
 
-## BUILDING 
+<div class="notes">
+* currently directory is hard-coded
+</div>
+
+*****
+
+#### Building 
 
 ```
-➜  nix git:(master) ✗ nix-build top.nix -A PaperScraper
+nix-build top.nix -A PaperScraper
 ```
 
 will at this point produce: 
 
 ```
-➜  nix git:(master) ✗ nix-build top.nix -A PaperScraper
+nix-build top.nix -A PaperScraper
 
 /nix/store/328ccq2dw1dq8i0dlmlzf0iknb1pad28-paperscraper-0.0.1
 ```
