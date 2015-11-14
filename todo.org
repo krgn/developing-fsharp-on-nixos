@@ -1,23 +1,12 @@
 # *scratch* buffer for creating quick outlines
 
 * TODO:
-*** IN explore containers and how to deploy to them               :important:
-*** IN notes NUR stichworte nicht ablesen
-*** IN WITZ AM ANFANG
-*** IN TWITTER MSG am ende
-*** IN TWITTER HANDLE + TITLE
-*** IN highlight.js integration                                      :pretty:
-*** IN emacs-helm integration                                 :would:be:nice:
-*** DONE IDEA paket integration
-    
-    `paket2nix`
-
-    writing a paket extension that can output nix expressions for a paket.lock file
-    to automate creating the dependencies for a given package
-    
-    this could also first be simply a script or small fsharp program (does paket
-    come with a library?)
-*** IN ISSUES WITH FSHARP
+** IN notes NUR stichworte nicht ablesen
+** IN WITZ AM ANFANG
+** IN TWITTER MSG am ende
+** IN TWITTER HANDLE + TITLE
+** IN highlight.js integration                                       :pretty:
+** IN ISSUES WITH FSHARP
     
     krgn | obadz: lucky! thats cool                                                                                           
    obadz | krgn: yes F# on Linux is a permanent struggle despite what all the cool kids are saying                            
@@ -29,7 +18,7 @@ codehero | vcunat: true, but sometimes months go by without updates
   vcunat | yeah, e.g. if some tests are failing, the channel won't get updated                                                
    obadz | krgn: https://github.com/fsharp/FSharp.Data/issues/762                                                             
       -- | Notice(NixOS_GitHub): [nixpkgs] devhell opened pull request #10868: ipfs: Disable building with Go 1.4             
-         | (master...ipfs) http://git.io/v8CSK                                                                                
+         | (master...ipfs) http://git.io/v8CSK |
       -- | Notice(NixOS_GitHub): [nixpkgs] vcunat pushed 1 new commit to master: http://git.io/v8CSi                          
       -- | Notice(NixOS_GitHub): nixpkgs/master 34eb56e Raymond Gauthier: mousepad: fix the `Using the 'memory' GSettings     
          | backend` issue....                                                                                                 
@@ -66,3 +55,15 @@ codehero | vcunat: true, but sometimes months go by without updates
          | few users there must be.                                                                                            
 
     https://github.com/fsharp/fsharp/issues/426#issue-90449550
+
+
+** IN turn off animation
+** IN use the white theme
+** IN find good highlighter or make screenshots
+** IN make a small diagram for the nuget, paket and hence paket2nix workflow 
+** IN show a fsproj file, sln file, paket files
+** IN talk about how to get all of nuget into the tree (automation)
+** IN reduce the number of (empty) slides and put information into notes
+** IN MBrace (cloud computing library) and possible Nix/NixOS integration
+** IN paket2nix should really try and build on some of the already existing stuff like buildDotNetPadckage
+** IN bild von der Regie in der introduction

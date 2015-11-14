@@ -1,8 +1,9 @@
 # Useful resources
 
-> - fsharpforfunandprofit blog thingy
+> - fsharpforfunandprofit blog
 > - FSharp WikiBook
 > - M$ language reference
+> - MBrace 
 
 <div class="notes">
 </div>
