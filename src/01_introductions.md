@@ -2,6 +2,8 @@
 % Karsten Gebbert
 % 15/11/2015
 
+![](img/lambda.gif)
+
 # Hi.
 
 *****

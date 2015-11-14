@@ -38,6 +38,12 @@
     <h3 class="date">15/11/2015</h3>
 </section>
 
+<section class="slide level2">
+
+<figure>
+<img src="img/lambda.gif" alt="" />
+</figure>
+</section>
 <section><section id="hi." class="titleslide slide level1"><h1>Hi.</h1></section><section class="slide level2">
 
 <h4 id="barfton"><span class="citation" data-cites="barfton">@barfton</span></h4>
@@ -167,6 +173,11 @@
 <li>lots of braces in interaction with classes</li>
 </ul>
 </aside>
+</section><section class="slide level2">
+
+<figure>
+<img src="img/luis.png" alt="" />
+</figure>
 </section><section class="slide level2">
 
 <h4 id="the-λ-calculus">The λ-calculus</h4>
@@ -470,41 +481,13 @@ type Tree&lt;&#39;a&gt; =
 
 </section><section class="slide level2">
 
-<h4 id="and-then-more-errors">And then, more errors :(</h4>
-<p>Unfortuantely, more problems crop up at this point.</p>
-<ul>
-<li>FSharp.Core dll is missing when running tests, hence the build fails</li>
-<li>FSharp.Core dll is missing when generating documentation, hence the build fails</li>
-</ul>
-<p>:(</p>
+<h4 id="and-then-more-errors">And then, more errors</h4>
 <aside class="notes">
 <ul>
-<li>mono crashes really hard running the tests</li>
-</ul>
-</aside>
-</section><section class="slide level2">
-
-<h4 id="ah-yes">Ah yes!</h4>
-<blockquote>
-<p>&quot;In compiled applications, you should never assume that FSharp.Core is in the GAC (&quot;Global Assembly Cache&quot;). Instead, you should deploy the appropriate FSharp.Core as part of your application.&quot;</p>
-</blockquote>
-<p>https://fsharp.github.io/2015/04/18/fsharp-core-notes.html</p>
-</section><section class="slide level2">
-
-<h4 id="quick-fix">Quick Fix:</h4>
-<p>Ship <em>FSharp.Core</em> as part of the build output and manage the dependency with <em>paket</em>.</p>
-<pre class="fragment"><code>in paket.dependencies, add;
-
-FSharp.Core = 4.0.0.1</code></pre>
-<pre class="fragment"><code>in src/PaperScraper/paket.references, add:
-
-FSharp.Core</code></pre>
-<pre class="fragment"><code>&lt;Reference Include=&quot;FSharp.Core&quot;&gt;
-  &lt;Private&gt;True&lt;/Private&gt;
-  &lt;HintPath&gt;..\..\packages\FSharp.Core\lib\net40\FSharp.Core.dll&lt;/HintPath&gt;
-&lt;/Reference&gt;</code></pre>
-<aside class="notes">
-<ul>
+<li>FSharp.Core dll is missing</li>
+<li><p>mono crashes really hard running the tests</p></li>
+<li>&quot;In compiled applications, you should never assume that FSharp.Core is in the GAC (&quot;Global Assembly Cache&quot;). Instead, you should deploy the appropriate FSharp.Core as part of your application.&quot;</li>
+<li>Ship <em>FSharp.Core</em> as part of the build output and manage the dependency with <em>paket</em>.</li>
 <li>add the FSharp.Core and verision to paket.dependencies</li>
 <li>add the FSharp.Core to paket.references in the project and tests project</li>
 <li>make sure to set TargetFSharpCoreVersion to the correct version!</li>
@@ -514,7 +497,7 @@ FSharp.Core</code></pre>
 </aside>
 </section><section class="slide level2">
 
-<h4 id="a-better-fix">A Better™ Fix:</h4>
+<h4 id="a-preliminary-fix">A preliminary Fix:</h4>
 <p>It would be better to use the F# version shipped with NixOS.</p>
 <pre class="fragment"><code>  &lt;TargetFSharpCoreVersion&gt;4.3.1.0&lt;/TargetFSharpCoreVersion&gt;</code></pre>
 <pre class="fragment"><code>  &lt;Private&gt;True&lt;/Private&gt;
@@ -531,37 +514,21 @@ FSharp.Core</code></pre>
 </aside>
 </section><section class="slide level2">
 
-<h4 id="finding-the-correct-f-version">Finding the correct F# Version</h4>
-<figure>
-<img src="img/fsharp-versions.png" alt="" />
-</figure>
-<p>http://stackoverflow.com/questions/20332046/correct-version-of-fsharp-core</p>
-</section><section class="slide level2">
-
-<h4 id="documentation">Documentation?</h4>
-<p>Both documentation and help targets don't build at this point as F# script files reference <em>DLLs</em> directly by path.</p>
-</section><section class="slide level2">
-
 <h4 id="but-were-building-an-executable-right">But we're building an executable, right?!</h4>
-<p>The project template at this point generates a library project by default, so the <em>.fsproj</em> file needs to be amended in 2 ways:</p>
 <pre class="fragment"><code>&lt;OutputType&gt;Exe&lt;/OutputType&gt;</code></pre>
 <pre class="fragment"><code>&lt;ErrorReport&gt;prompt&lt;/ErrorReport&gt;
 &lt;Externalconsole&gt;true&lt;/Externalconsole&gt;</code></pre>
-</section><section class="slide level2">
-
-<p>Additionally, the tests project also holds a reference to the current project, so we need to comment it and the code in <em>Tests.fs</em> out to ensure a clean build.</p>
 <aside class="notes">
-
+<p>The project template at this point generates a library project by default, so the <em>.fsproj</em> file needs to be amended in 2 ways:</p>
 </aside>
 </section><section id="phew" class="slide level2">
 <h1>Phew!</h1>
 <figure>
 <img src="img/phew.png" alt="" />
 </figure>
-</section><section id="recoll" class="slide level2">
-<h1>Recoll</h1>
 </section><section class="slide level2">
 
+<h4 id="recoll">Recoll</h4>
 <ul>
 <li class="fragment">full-text search tool</li>
 <li class="fragment">uses xapian underneath (like other great tools, e.g. <code>notmuch</code> and <code>mu</code>)</li>
@@ -574,8 +541,9 @@ FSharp.Core</code></pre>
 <aside class="notes">
 
 </aside>
-</section><section id="fparsec" class="slide level2">
-<h1>FParsec!</h1>
+</section><section class="slide level2">
+
+<h4 id="fparsec">FParsec!</h4>
 <ul>
 <li class="fragment">I ♥ parsers</li>
 </ul>
@@ -620,7 +588,7 @@ let plainChars : Parser&lt;string, unit&gt; =
 </ul>
 </section><section class="slide level2">
 
-<h4 id="a-result-row">A Result &quot;Row&quot;:</h4>
+<h4 id="a-result-row">A Result Row:</h4>
 <ul>
 <li class="fragment">begins with an abstract, eventually followed by a</li>
 <li class="fragment">file name line, eventually followed by a</li>

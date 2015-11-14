@@ -2,8 +2,10 @@
 
 > - fsharpforfunandprofit blog
 > - FSharp WikiBook
-> - M$ language reference
-> - MBrace 
+> - https://github.com/krgn/Paket2Nix
 
-<div class="notes">
-</div>
+*****
+
+#### @barfton
+#### k@ioctl.it
+#### https://github.com/krgn

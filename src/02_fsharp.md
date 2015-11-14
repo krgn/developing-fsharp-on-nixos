@@ -49,7 +49,7 @@
 
 > - no type-classes
 > - noisy syntax & sometimes quirky syntax
-> - introduces new (confusing) nomenclature for common fp concepts
+> - introduces new (confusing) nomenclature
 > - impure
  
 <div class="notes">
@@ -61,6 +61,10 @@
 - type checker is finicky
 - lots of braces in interaction with classes
 </div>
+
+*****
+
+![](img/luis.png)
 
 *****
 
