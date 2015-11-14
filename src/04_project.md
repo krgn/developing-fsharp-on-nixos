@@ -1,12 +1,14 @@
 # Demo
 
+*****
+
 #### Proposition
 
-Assume we have a lots of great computer science papers on our SSD, and we'd like to be
-able to index and query for information (e.g. [1]) via _curl_.
+Assume we have a lots of great computer science papers on our SSD, and we'd like
+to be able to index and query for information via _curl_.
 
-So, lets build a small microservice around the _recoll_ full-text indexer and
-serve query results via HTTP.
+Build a small microservice around the _recoll_ full-text indexer and serve query
+results via HTTP.
 
 <div class="notes">
 - olli charles' git-annex
@@ -16,7 +18,7 @@ serve query results via HTTP.
 
 *****
 
-#### Using Project Scaffold
+#### The Project Scaffold
 
 ```{.fsharp}
 git clone git@github.com:fsprojects/ProjectScaffold.git PaperScraper
@@ -40,15 +42,7 @@ Answer a couple of questions and you're set. But wait!
 
 *****
 
-#### A Note About Build Targets
-
-Since in _NixOS_ there is no(t one, but many) Global Assembly Cache, resolving
-default build targets shipped with _F#_ does not work as expected.
-
-*****
-
-The solution is to patch all _.fsproj_ files in the solution and only
-conditionally set the _FSharpTargetsPath_ if the target actually exists:
+#### Build Targets
 
 ```
 - <FSharpTargetsPath>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio...
@@ -57,45 +51,25 @@ conditionally set the _FSharpTargetsPath_ if the target actually exists:
 
 *****
 
-There is a package _nix_ written by _@obadz_ which contains a script that finds
-and patches up _.fsproj_ files to look out for the _FSharpTargetsPath_
-enviroment variable.
-
 ```→ nix-env -i dotnetbuildhelpers```
 
-*****
-
-#### Usage: 
-
-```
+```{.fragment}
 → patch-fsharp-targets.sh
   Patching F# targets in fsproj files...
   ./src/PaperScraper/PaperScraper.fsproj
   ./tests/PaperScraper.Tests/PaperScraper.Tests.fsproj
 ```
 
+<div class="notes">
+* written by _@obadz_ 
+* patches up _.fsproj_ files
+*  _FSharpTargetsPath_ enviroment variable.
+</div>
 *****
-
-Last, we only need to set _FSharpTargetsPath_ in our shell:
-
-```{.shell}
-→ export FSharpTargetsPath=$(dirname $(which fsharpc))/../lib/mono/4.5/Microsoft.FSharp.Targets
-```
-
-```{.shell .fragment}
-→ set -x FSharpTargetsPath (dirname (which fsharpc))/../lib/mono/4.5/Microsoft.FSharp.Targets
-```
-
-```{.shell .fragment}
-{ config, pkgs, ... }:
-{
-  environment.variables.FSharpTargetsPath = "${pkgs.fsharp}/lib/mono/4.5/Microsoft.FSharp.Targets";
-}
-```
 
 *****
 
-#### Hm, More Errors
+#### And then, more errors :(
 
 Unfortuantely, more problems crop up at this point.
 
@@ -202,12 +176,12 @@ The project template at this point generates a library project by default, so
 the _.fsproj_ file needs to be amended in 2 ways:
 
 ```{.fragment}
-    <OutputType>Exe</OutputType>
+<OutputType>Exe</OutputType>
 ```
 
 ```{.fragment}
-    <ErrorReport>prompt</ErrorReport>
-    <Externalconsole>true</Externalconsole>
+<ErrorReport>prompt</ErrorReport>
+<Externalconsole>true</Externalconsole>
 ```
 
 *****
@@ -280,29 +254,6 @@ let plainChars : Parser<string, unit> =
 
 <div class="notes">
 - there is a more concise way to do this, but it its a good example nonetheless
-</div>
-
-*****
-
-A mime-type string as seen in our output is a sequence of plain characters
-separated by a slash, followed by some more plain characters.
-
-```
-application/pdf ....
-```
-
-```{.fragment}
-let mimeType : Parser<string, unit> =
-  plainChars  >>= fun res1 ->
-  pstring "/" >>= fun _    ->
-  plainChars  >>= fun res2 ->
-  preturn (res1+"/"+res2)
-```
-
-<div notes="class">
-- this is not actually a valid media type parser at all
-- there are media types with +.- and numbers
-- good enough for now
 </div>
 
 *****

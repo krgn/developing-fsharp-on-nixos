@@ -34,114 +34,136 @@
     <h3 class="date">27/10/2015</h3>
 </section>
 
-<section><section id="hi." class="titleslide slide level1"><h1>Hi.</h1></section><h4 id="introductions">Introductions</h4><section class="slide level2">
+<section><section id="hi." class="titleslide slide level1"><h1>Hi.</h1></section><section class="slide level2">
+
+<h4 id="barfton"><span class="citation" data-cites="barfton">@barfton</span></h4>
+<h4 id="kioctl.it">k@ioctl.it</h4>
+<h4 id="httpsgithub.comkrgn">https://github.com/krgn</h4>
+</section><section class="slide level2">
+
+<ul>
+<li class="fragment">Nsynk GmbH</li>
+<li class="fragment">background in music, arts and computing</li>
+<li class="fragment">functional programming</li>
+<li class="fragment">interested in systems programming, distributed computing, web, a/v, the whole thing</li>
+<li class="fragment">using NixOS properly since summer 2015</li>
+</ul>
+<aside class="notes">
+<p>Introductions: - my background in arts, music, computing - interests - my usage of NixOS * mainly as a development platform * use VMs for Windows-based work * my experiences reflect a new user story</p>
+</aside>
+</section><section class="slide level2">
+
+<figure>
+<img src="img/vvvv.png" alt="VVVV render feedback tree fractal" /><figcaption>VVVV render feedback tree fractal</figcaption>
+</figure>
+<aside class="notes">
+<ul>
+<li>a few words about iris</li>
+<li>distributed system of VVVV renderers</li>
+<li>used for playback of high-quality (4K) video streams, potentially with 3d</li>
+<li>rendered overlays and integration with all kinds of other systems</li>
+<li>(sensors, kinetics etc)</li>
+</ul>
+</aside>
+</section><section class="slide level2">
+
+<figure>
+<img src="img/audi.jpeg" alt="IAA 2015 Audi" /><figcaption>IAA 2015 Audi</figcaption>
+</figure>
+</section><section class="slide level2">
 
 <h3 id="who-why">Who? Why?</h3>
 <ul>
-<li class="fragment">this talk is meant as an introduction to developing F# on NixOS</li>
+<li class="fragment">introduction to developing F# on NixOS</li>
 <li class="fragment">I am not a Nix(OS) or F# expert or .NET veteran (yet)</li>
-<li class="fragment">sharing my personal experience and impressions</li>
+<li class="fragment">sharing my personal experience and impressions while getting some work done</li>
 <li class="fragment">approaches taken have a few rough edges, so please help me improve it!</li>
 <li class="fragment">it is my first experience of this kind, so please do criticize me (gently)</li>
 </ul>
-<aside class="notes">
-<p>Introductions:</p>
-<ul>
-<li>introduce yourself</li>
-<li>work @ nsynk GmbH</li>
-<li>my background in arts, music, computing</li>
-<li>interests
-<ul>
-<li>functional programming</li>
-<li>systems programming</li>
-<li>distributed systems</li>
-<li>web</li>
-<li>audio/video</li>
-</ul></li>
-<li>a few words about iris
-<ul>
-<li>distributed system of VVVV renderers</li>
-<li>used for playback of high-quality (4K) video streams, potentially with 3d rendered overlays and integration with all kinds of other systems (sensors, kinetics etc)</li>
-<li>IAA</li>
-</ul></li>
-<li>my usage of NixOS
-<ul>
-<li>mainly as a development platform</li>
-<li>use VMs for Windows-based work</li>
-</ul></li>
-</ul>
-</aside>
 </section><section class="slide level2">
 
 <h3 id="what">What?</h3>
 <ul>
 <li class="fragment">explore some basic aspects of F#</li>
-<li class="fragment">look at a library for creating http services, Suave.IO</li>
-<li class="fragment">give an overview over recoll, a file indexer</li>
-<li class="fragment">construct a small service to query recoll via HTTP</li>
-<li class="fragment">deploy that service using nix</li>
+<li class="fragment">look some F# libraries and code</li>
+<li class="fragment">examine packaging strategies using nix</li>
+<li class="fragment">show how construct a small service</li>
+<li class="fragment">simple deployment using nix</li>
 </ul>
+<aside class="notes">
+<ul>
+<li></li>
+</ul>
+</aside>
 </section></section>
 <section><section id="what-is-f" class="titleslide slide level1"><h1>What is F#?</h1></section><h4 id="f">F#</h4><section class="slide level2">
 
-<blockquote>
-<p>F# was developed in 2005 at Microsoft Research[1]. In many ways, F# is essentially a .Net implementation of OCaml, combining the power and expressive syntax of functional programming with the tens of thousands of classes which make up the .NET class library.</p>
-</blockquote>
-</section><section class="slide level2">
-
-<h4 id="overview">Overview</h4>
 <ul>
-<li class="fragment">functional-first CLI programming language in the ML family</li>
-<li class="fragment">object-orientation</li>
-<li class="fragment">the 'm'-word (look at the computation-food paper that I downloaded)</li>
-<li class="fragment">ecosystem seems somewhat fragmented, but there are many useful libraries out there</li>
+<li class="fragment">developed in 2005 at Microsoft Research</li>
+<li class="fragment">essentially a .NET implementation of OCaml</li>
+<li class="fragment">functional-first, strict, multi-paradigm programming language</li>
+<li class="fragment">first-class citizen in the .NET ecosystem</li>
+<li class="fragment">compiles to IL (byte-code format) and runs on CLR (AOT available)</li>
 </ul>
 <aside class="notes">
+<ul>
+<li>type system is considerably simpler than haskells</li>
+<li>no type classes</li>
+</ul>
+</aside>
+</section><section class="slide level2">
 
+<h4 id="ecosystem">Ecosystem</h4>
+<ul>
+<li class="fragment">Free Software!</li>
+<li class="fragment">runs on mono, as well as the coreclr (both available through nix)</li>
+<li class="fragment">feeds off of Nuget (package manager and repository)</li>
+</ul>
+<aside class="notes">
+<ul>
+<li>has a host of good libraries</li>
+</ul>
 </aside>
 </section><section class="slide level2">
 
 <h4 id="pros">Pros:</h4>
 <ul>
-<li class="fragment">For those who (have to) write software for the CLR its a solid choice</li>
-<li class="fragment">With projects like WebSharper or FunScript, F# can be used throughout the whole stack (share types and code, thus safety)</li>
-<li class="fragment">Interop wth C# works really well, and there are lots of good libraries</li>
-<li class="fragment">its essentially a really good blend between the principled and utilitarian mind-sets</li>
+<li class="fragment">great integration with the CLR and other languages targeting it</li>
+<li class="fragment">lots of good libraries</li>
+<li class="fragment">full-stack language</li>
+<li class="fragment">good blend of principled and pragmatic mind-sets</li>
+<li class="fragment">reflection &amp; dynamic typing</li>
 </ul>
 <aside class="notes">
 <ul>
 <li>WARNING: highly subjective</li>
+<li>WebSharper</li>
+<li>Akka.NET</li>
+<li>MBrace</li>
 </ul>
 </aside>
 </section><section class="slide level2">
 
 <h4 id="cons">Cons:</h4>
 <ul>
-<li class="fragment">it introduces new nomenclature for common fp concepts (monads), to create a more clear distinction to other languages, which confused me more than it helped</li>
-<li class="fragment">TODO: find out differences in the type systems</li>
-<li class="fragment">no GADTs</li>
-<li class="fragment">while OO has some points to go for it (think familiarity to large audiences of developers, generally well understood) it is a bit ugly and alien in this context.</li>
+<li class="fragment">no type-classes</li>
+<li class="fragment">noisy syntax</li>
+<li class="fragment">quirky syntax</li>
+<li class="fragment">impure</li>
+<li class="fragment">introduces new (confusing) nomenclature for common fp concepts</li>
+<li class="fragment">reflection &amp; dynamic typing</li>
 </ul>
 <aside class="notes">
 <ul>
 <li>again, WARNING: highly subjective!</li>
+<li>quirks include method call syntax tuples?</li>
+<li>also, methods can apparently not easly be partially applied</li>
+<li>class constructors cannot be partially applied</li>
+<li>lots of little inconsistencies</li>
+<li>type checker is finicky</li>
+<li>lots of braces in interaction with classes</li>
 </ul>
 </aside>
-</section><section class="slide level2">
-
-<h4 id="differences-from-haskell">Differences from Haskell</h4>
-<ul>
-<li class="fragment">TODO: list up different operators</li>
-<li class="fragment">TODO: explain fixity rules</li>
-<li class="fragment">TODO: show a small implementation of a ComputationBuilder</li>
-</ul>
-<ul>
-<li class="fragment">impure: <em>launchMissiles ()</em> whereever you feel like it</li>
-<li class="fragment">no <code>where</code></li>
-</ul>
-</section><section class="slide level2">
-
-<h4 id="lets-look-at-some-code">Let's look at some code</h4>
 </section><section class="slide level2">
 
 <h4 id="the-λ-calculus">The λ-calculus</h4>
@@ -158,11 +180,10 @@ x |&gt; f</code></pre>
 <aside class="notes">
 <p>VARIABLE BINDING</p>
 <ul>
-<li>for me &quot;seeing is believing&quot;</li>
-<li>all statements are bound using <code>let</code></li>
+<li>&quot;seeing is believing&quot;</li>
+<li>all statements are bound using <code>let</code> (noise)</li>
 <li>mention <code>let .. in</code></li>
 <li>talk about the type annotation</li>
-<li>Not my absolute super-favourite programming language, but certainly a <em>very</em> good one.</li>
 </ul>
 </aside>
 </section><section class="slide level2">
@@ -210,9 +231,10 @@ let me = new Person (34, &quot;Karsten&quot;)
 me.OldEnough ()</code></pre>
 <aside class="notes">
 <ul>
-<li>method invokation is confusing, because args are esseentially passed as a n-tuplet</li>
+<li>method invokation is confusing</li>
+<li>args are esseentially passed as a n-tuples</li>
 <li>let-bound variables are private</li>
-<li>mutability is simble, if somewhat verbose</li>
+<li>mutability is simple, if somewhat verbose</li>
 </ul>
 </aside>
 </section><section class="slide level2">
@@ -278,118 +300,140 @@ type Tree&lt;&#39;a&gt; =
 
 <h4 id="other-cool-things-to-look-at">Other Cool Things To Look At</h4>
 <ul>
-<li class="fragment">Type Providers</li>
+<li class="fragment">Type Providers!</li>
 <li class="fragment">Monads, or <em>Computation Expressions</em></li>
 <li class="fragment">Quotations &amp; Reflection (metaprogramming)</li>
 <li class="fragment">Units of Measure</li>
-<li class="fragment">built-in support for Actor-style programming</li>
-</ul>
-</section><section id="f-and-nixos" class="slide level2">
-<h1>F# and NixOS</h1>
-</section><section class="slide level2">
-
-<ul>
-<li class="fragment">F# currently is packaged separately from mono</li>
-<li class="fragment">as a consequence, there is no single GAC (Global Assembly Cache) for all .NET packages</li>
-<li class="fragment">package management is traditionally done using <em>nuget</em> and an IDE front-end (this might make some people in the audience flinch)</li>
-<li class="fragment"><em>paket</em> is a very promising replacement setting out to fix the common problem of <em>DLL</em> hell</li>
-<li class="fragment"><em>paket</em> resolves the dependency graph at the solution level and manages references of projects</li>
-</ul>
-</section><section class="slide level2">
-
-<h4 id="but-whats-the-point-of-using-nixos-then">But whats the point of using Nix(OS) then?</h4>
-<pre class="fsharp fragment"><code>Tentative Answer:
-
-because it brings a lot more value to the table than just package management!</code></pre>
-</section><section class="slide level2">
-
-<p>To use <em>nix</em> for package management we'd need to:</p>
-<ol type="1">
-<li class="fragment">create and maintain packages for nuget packages, possibly automating the process with the right tooling</li>
-<li class="fragment">have a way to generate reference entries in .fsproj files automatically, just as <em>paket</em> does it</li>
-<li class="fragment">build projects such that runtime deps get linked correctly</li>
-</ol>
-</section><section class="slide level2">
-
-<ul>
-<li class="fragment">some work towards that end has already been done by <span class="citation" data-cites="obadz">@obadz</span>, albeit it seems experimental at this point</li>
-<li class="fragment">there might not be big enough incentives to do this at this point</li>
+<li class="fragment">MailboxProessors</li>
 </ul>
 <aside class="notes">
 <ul>
-<li>not trivial</li>
-<li>as with haskell ecosystem, not exactly easy-to-use</li>
-<li>haskell package management had more incentives since cabal-hell was much more of a pressing problem to haskell users</li>
+<li>type providers cool to integrate with APIs</li>
+<li>Async good support for concurrent and parallel computation (Async.Parallel)</li>
+</ul>
+</aside>
+</section><section id="f-and-nix" class="slide level2">
+<h1>F# and Nix</h1>
+</section><section class="slide level2">
+
+<ul>
+<li class="fragment">F# is packaged separately from mono (and should be)</li>
+<li class="fragment">no single GAC (Global Assembly Cache) for all .NET packages</li>
+<li class="fragment">package management is <em>Nuget</em> + <em>$IDE</em></li>
+<li class="fragment">Nuget distributes compiled byte-code</li>
+<li class="fragment"><em>Paket</em> is a very promising replacement (fixes <em>DLL</em> hell)</li>
+</ul>
+<aside class="notes">
+<ul>
+<li><em>Paket</em> resolves the dependency graph at the solution level</li>
+<li>manages references of projects</li>
+</ul>
+</aside>
+</section><section class="slide level2">
+
+<h4 id="common-project-workflow">Common Project Workflow</h4>
+<figure>
+<img src="img/common-fsharp-workflow.png" alt="" />
+</figure>
+<aside class="notes">
+<ul>
+<li>works for local development</li>
+<li>uses FAKE (f# based build system) (build.sh)</li>
+<li><code>paket</code> phones home <em>every</em> single time it is run</li>
+<li><code>paket</code> targets are also included into each project file</li>
+<li>will <em>NOT</em> work well in nix-land</li>
+</ul>
+</aside>
+</section><section class="slide level2">
+
+<h4 id="but-nix">But, Nix?</h4>
+</section><section class="slide level2">
+
+<p>To use <em>nix</em> for package management we will need to:</p>
+<ol type="1">
+<li class="fragment">create and maintain packages for nuget dependendcies</li>
+<li class="fragment">generate reference entries in .fsproj files linking-in store paths to <em>DLLs</em></li>
+<li class="fragment">repeat process for all dependencies</li>
+</ol>
+<aside class="notes">
+<ul>
+<li>SHOW EXAMPLE .fsproject</li>
+<li>SHOW EXAMPLE .sln</li>
+<li>SHOW EXAMPLE paket.references/.lock/.template</li>
+<li>automating the process with the right tooling ;)</li>
+<li>paket already manages references</li>
+</ul>
+</aside>
+</section><section class="slide level2">
+
+<ul>
+<li class="fragment">some work towards that end has already been done already</li>
+<li class="fragment">But! Very few packages exist now</li>
+<li class="fragment">it is somewhat orthogonal to how people develop</li>
+<li class="fragment">not enough incentive to get everything packaged</li>
+</ul>
+<aside class="notes">
+<ul>
+<li>not trivial to parse and edit xml project files</li>
+<li>re-implements a lot of functionality already in paket</li>
 <li>disagreement?</li>
 <li>discussion?</li>
 <li>different points of view on that matter?</li>
+<li>Nuget API for automating packaging</li>
+</ul>
+</aside>
+</section><section class="slide level2">
+
+<h4 id="the-obvious-solution">The (obvious) solution</h4>
+<ul>
+<li class="fragment">use <em>Paket</em> :)</li>
+<li class="fragment">lift nuget packages into the store</li>
+<li class="fragment">link packages into the <em>packages</em> directory at build time</li>
+<li class="fragment">disable nuget/paket</li>
+<li class="fragment">use xbuild instead of FAKE</li>
+</ul>
+</section><section class="slide level2">
+
+<h4 id="paket2nix">Paket2Nix</h4>
+<pre><code>https://github.com/krgn/Paket2Nix</code></pre>
+</section><section class="slide level2">
+
+<ul>
+<li class="fragment">uses Paket metadata, the .lock file in particular</li>
+<li class="fragment">discovers projects and their metadata</li>
+<li class="fragment">generates Nix expressions for all dependencies project code (one per project)</li>
+<li class="fragment">creates wrapper scripts for executables</li>
+</ul>
+<aside class="notes">
+<ul>
+<li>there is resolv.conf in the chroot/sandbox, so no network</li>
+<li>no paket and no nuget</li>
+<li>tl;dr it doestn't work</li>
+<li>References in XML project files</li>
+<li>currently for Paket is the Way-To Go™ for development</li>
+<li>solves common problems in .NET development (consistent dependency trees)</li>
+<li>integreate with Paket for maximum flexibility</li>
+<li>inter-op with non-nix platforms</li>
 </ul>
 </aside>
 </section></section>
-<section><section id="a-sample-project" class="titleslide slide level1"><h1>A Sample Project</h1></section><h4 id="project">Project</h4><section class="slide level2">
+<section><section id="demo" class="titleslide slide level1"><h1>Demo</h1></section><section class="slide level2">
 
 <h4 id="proposition">Proposition</h4>
 <p>Assume we have a lots of great computer science papers on our SSD, and we'd like to be able to index and query for information (e.g. [1]) via <em>curl</em>.</p>
 <p>So, lets build a small microservice around the <em>recoll</em> full-text indexer and serve query results via HTTP.</p>
-<p>[1] https://github.com/ocharles/papers</p>
 <aside class="notes">
 <ul>
+<li>olli charles' git-annex</li>
 <li>idea could at transferred to some more relevant technology like, e.g., <em>elasticsearch</em></li>
 <li>from there, it might be interesting to go on to explore clustering and config management with nix</li>
 </ul>
 </aside>
 </section><section class="slide level2">
 
-<h4 id="a-quick-word-about...">A quick word about...</h4>
-</section><section class="slide level2">
-
-<h4 id="microservices">Microservices!</h4>
-</section><section class="slide level2">
-
-<h4 id="microservies">Microservies?</h4>
-<p><em>TODO</em>: remind myself WTF are they again?</p>
-</section><section class="slide level2">
-
-<p>No, but seriously, its a stupid buzzword and we all know it but apparently we like pressing those buttons over and over again.</p>
-</section><section class="slide level2">
-
-<p>A microservice is a small, stand-alone component most often part of a system of more of these stand-alone, de-coupled units.</p>
-<p>Essentially, its a scalability design pattern for web applications.</p>
-</section><section class="slide level2">
-
-<p>From the point of view of a functional programming enthusiast, microservices are a good example of how small, stateless (<em>pure!</em>) building blocks (<em>referential transparency</em>) can be <em>composed</em> into systems that are easier to understand and maintain and more robust that big monolithic code-bases.</p>
-</section><section class="slide level2">
-
-<p>I am not a dev-ops person, but I hear that larger systems become fiendishly hard to deploy and monitor, though.</p>
-<p>Blame successfully shifted!</p>
-<p>:)</p>
-<aside class="notes">
-
-</aside>
-</section><section id="bootstrapping" class="slide level2">
-<h1>Bootstrapping</h1>
-</section><section class="slide level2">
-
-<p>The state of affairs of project management in mono/F# is still for the most part centered around using IDE's for everything.</p>
-<aside class="notes">
-<ul>
-<li>quite a big annoyance</li>
-</ul>
-</aside>
-</section><section class="slide level2">
-
-<p>There are the obvious Candidates, such as MS' Visual Studio or MonoDevelop, which is at least free and available via <em>nix</em>.</p>
-</section><section class="slide level2">
-
-<p>To alleviate that situation for those who don't like IDEs, there is a project scaffold git repository with an initialization routine to help set up everything.</p>
-</section><section class="slide level2">
-
-<p>We'll focus on that workflow for this talk, since this be beneficial to automate tasks down the line (think CI and deployment).</p>
-</section><section class="slide level2">
-
 <h4 id="using-project-scaffold">Using Project Scaffold</h4>
-<pre class="fsharp"><code>→ git clone git@github.com:fsprojects/ProjectScaffold.git PaperScraper</code></pre>
-<pre class="fsharp fragment"><code>→ cd PaperScraper &amp;&amp; ./build.sh</code></pre>
+<pre class="fsharp"><code>git clone git@github.com:fsprojects/ProjectScaffold.git PaperScraper</code></pre>
+<pre class="fsharp fragment"><code>cd PaperScraper &amp;&amp; ./build.sh</code></pre>
 </section><section class="slide level2">
 
 <p>Answer a couple of questions and you're set. But wait!</p>
@@ -533,39 +577,11 @@ FSharp.Core</code></pre>
 <li class="fragment">needs to be configured correctly (whitelist directories)</li>
 <li class="fragment">the indexer needs to be run in a cron/systemd timer job</li>
 </ul>
-</section><section class="slide level2">
+<aside class="notes">
 
-<h4 id="an-example">An Example</h4>
-<pre><code>➜  recoll -t -n 1 -m -q burrito
-Recoll query: ((burrito:(wqf=11) OR burritos))
-5 results (printing  1 max):
-application/pdf [file:///home/k/doc/books/burrito_monads.pdf]   [burrito_monads.pdf]    74745   bytes   
-abstract =   Burritos for the Hungry Mathematician Ed Morehouse April 1, 2015 Abstract The advent of fast-casual Mexican-style dining establishments, such as Chipotle and Qdoba, has greatly improved the productivity of research mathematicians and theoretical
-author = LaTeX with hyperref package
-dbytes = 10425
-fbytes = 74745
-filename = burrito_monads.pdf
-fmtime = 01445444345
-mtime = 01445444345
-mtype = application/pdf
-origcharset = UTF-8
-pcbytes = 74745
-rcludi = /home/k/doc/books/burrito_monads.pdf|
-relevancyrating = 100%
-sig = 747451445444345
-title = 
-url = file:///home/k/doc/books/burrito_monads.pdf</code></pre>
-</section><section class="slide level2">
-
-<h4 id="search-for-file-names">Search For File Names</h4>
-<pre><code>➜  recoll -t -n 1 -f burrito
-Recoll query: (XSFSburrito_monads.pdf)
-1 results
-application/pdf [file:///home/k/doc/books/burrito_monads.pdf]   [burrito_monads.pdf]    74745   bytes   </code></pre>
-</section><section id="so-parsing-anyone" class="slide level2">
-<h1>So, parsing anyone?</h1>
-</section><section id="fparsec-to-the-rescue" class="slide level2">
-<h1>FParsec to the rescue!</h1>
+</aside>
+</section><section id="fparsec" class="slide level2">
+<h1>FParsec!</h1>
 <ul>
 <li class="fragment">I ♥ parsers</li>
 </ul>
@@ -574,13 +590,9 @@ application/pdf [file:///home/k/doc/books/burrito_monads.pdf]   [burrito_monads.
 <ul>
 <li class="fragment">parser-combinator libary modeled after Parsec</li>
 <li class="fragment">a Parser is a function from some input to a possible result</li>
-</ul>
-<pre class="fragment"><code>type Parser&lt;&#39;a, &#39;u&gt; = CharStream&lt;&#39;u&gt; -&gt; Reply&lt;&#39;a&gt;</code></pre>
-<ul>
 <li class="fragment">combinators (higher-order functions) compose to form new parsers</li>
 <li class="fragment">conditional parsers (&lt;|&gt;)</li>
 <li class="fragment">lookahead parsers that don't consume the input</li>
-<li class="fragment">FIXME: some more examples?</li>
 </ul>
 </section><section class="slide level2">
 
@@ -830,34 +842,12 @@ type WebPart = HttpContext -&gt; SuaveTask&lt;HttpContext&gt;
 // hence: WebPart = HttpContext -&gt; Async&lt;HttpContext option&gt;</code></pre>
 </section><section id="pulling-it-all-together" class="slide level2">
 <h1>Pulling It All Together</h1>
-<p>We need to:</p>
-<ol type="1">
+<ul>
 <li class="fragment">create data types (domain model)</li>
 <li class="fragment">write a simple parser for <em>recoll</em> output</li>
 <li class="fragment">map HTTP query to command-line arguments</li>
 <li class="fragment">serialiation of results to JSON</li>
-</ol>
-</section><section class="slide level2">
-
-<h4 id="dependencies">Dependencies</h4>
-<p>Add Suave and FParsec to <em>paket.depenecies</em> and <em>src/PaperScraper/paket.references</em>:</p>
-<pre><code>source https://nuget.org/api/v2
-
-nuget FSharp.Formatting
-nuget NUnit 
-nuget NUnit.Runners
-nuget FAKE
-nuget SourceLink.Fake
-
-nuget Suave
-nuget FParsec
-
-github fsharp/FAKE modules/Octokit/Octokit.fsx</code></pre>
-</section><section class="slide level2">
-
-<p>Contents of <em>paket.references</em>:</p>
-<pre><code>Suave
-FParsec</code></pre>
+</ul>
 </section><section class="slide level2">
 
 <h5 id="a-little-tooling">A little Tooling</h5>
@@ -878,7 +868,6 @@ FParsec</code></pre>
 </section><section class="slide level2">
 
 <h5 id="basic-types">Basic Types</h5>
-<p>TODO: WORK IT OUT!!!</p>
 <pre class="fsharp fragment"><code>type MimeType = string
 type FileName = string
 
@@ -905,118 +894,102 @@ type SearchResult =
 </section><section class="slide level2">
 
 <h5 id="parsing-recoll-output">Parsing Recoll Output</h5>
-<p>TODO: insert parser code</p>
+<pre class="fsharp fragment"><code>let searchResult : Parser&lt;Row,unit&gt; =
+  pipe5 (skipTo abstractLine)
+        (skipTo filenameLine)
+        (skipTo mtypeLine)
+        (skipTo charsetLine)
+        (skipTo urlLine)
+        mkRow
+
+let mkResult query count results =
+  { Query = query
+  ; Count = count
+  ; Rows  = results
+  }
+
+let recollOutput : Parser&lt;QueryResult, unit&gt; =
+  queryLine &gt;&gt;= fun q -&gt;
+  totalLine &gt;&gt;= fun c -&gt;
+  (parray (int(c)) searchResult) &gt;&gt;= fun rows -&gt;
+  preturn (mkResult q c rows)</code></pre>
 </section><section class="slide level2">
 
 <h5 id="querying-recoll">Querying Recoll</h5>
-<p>TODO: insert query code</p>
-</section><section class="slide level2">
-
-<h5 id="section"></h5>
-</section></section>
-<section><section id="deployment" class="titleslide slide level1"><h1>Deployment</h1></section><h4 id="deployment-1">Deployment</h4><section class="slide level2">
-
-<h4 id="creating-a-package">Creating A Package*</h4>
-<p>(* or Derivation in Nix-lingo)</p>
-</section><section class="slide level2">
-
-<h4 id="the-impure-way">The <em>Impure</em> way</h4>
-<pre><code>with import &lt;nixpkgs&gt; {};
-with lib;
+<pre class="fsharp fragment"><code>let executeProcess (exe,cmdline) =
+  let psi = new System.Diagnostics.ProcessStartInfo(exe,cmdline) 
+  psi.UseShellExecute &lt;- false
+  psi.RedirectStandardOutput &lt;- true
+  let p = System.Diagnostics.Process.Start(psi) 
+  let out = p.StandardOutput.ReadToEnd() 
+  p.WaitForExit()
+  ( p.ExitCode, out )
 
 
-stdenv.mkDerivation {
-  name = &quot;paperscraper-$version&quot;;
-
-  version = &quot;0.0.1&quot;;
-
-  src = fetchurl {
-    url = &quot;https://github.com/krgn/PaperScraper/tarball/6a8e0d29c90844fa18665278f5dd1fb96537d70&quot;;
-    sha256 = &quot;0l2jchn4p9bj157h94l6gi8ca3hafyacx5809nv9ssvhlk00ps87&quot;;
-  };
-
-  buildInputs = [ fsharp mono curl strace ];
-
-  phases = [ &quot;unpackPhase&quot; &quot;buildPhase&quot; &quot;installPhase&quot; ];
-
-  buildPhase = &#39;&#39;
-    patchShebangs .
-    build.sh
-  &#39;&#39;;
-
-  installPhase = &#39;&#39;
-    mkdir -p &quot;$out/bin&quot; &quot;$out/lib/mono/packages/$name&quot;
-
-    cp -r &quot;bin/PaperScraper&quot; &quot;$out/lib/mono/packages/$name/&quot;
-
-    cat &gt;&gt; &quot;$out/bin/PaperScraper&quot; &lt;&lt;-WRAPPER
-    #!/bin/sh
-    ${mono}/bin/mono $out/lib/PaperScraper/PaperScraper.exe
-    WRAPPER
-
-    chmod +x &quot;$out/bin/PaperScraper&quot;
-  &#39;&#39;;
-
-  meta = {
-    description = &quot;its a service!&quot;;
-    homepage = &quot;https://github.com/krgn/PaperScraper&quot;;
-  };
-}</code></pre>
-</section><section class="slide level2">
-
-<p>Install it!</p>
-<pre><code>$ nix-env -i -f paperscraper.nix</code></pre>
-</section><section id="oh-no" class="slide level2">
-<h1>OH NO!</h1>
-</section><section id="of-course-in-nix-clocks-tick-differently." class="slide level2">
-<h1>Of course! In Nix, clocks tick differently.</h1>
+let queryRecoll term =
+  let binpath = &quot;/run/current-system/sw/bin/recoll&quot;
+  let raw = executeProcess (binpath, sprintf &quot;-t -o -m -q %s&quot; term)
+  if fst raw = 0
+  then parseOutput (snd raw)
+  else failwith &quot;running recoll failed&quot;</code></pre>
+<h4 id="deployment">Deployment</h4>
 <aside class="notes">
 <ul>
-<li>there is resolv.conf in the chroot/sandbox, so no network</li>
-<li>no paket and no nuget</li>
-<li>tl;dr it doestn't work</li>
+<li>very minimalistic solution</li>
+<li>happy to learn about the full-blown approaches nixops/disnix</li>
 </ul>
 </aside>
-</section><section id="the-solution" class="slide level2">
-<h1>THE SOLUTION</h1>
-<ul>
-<li class="fragment">lift nuget packages into the store</li>
-<li class="fragment">link packages into the packages directory</li>
-</ul>
-</section><section id="introducint-paket2nix" class="slide level2">
-<h1>INTRODUCINT PAKET2NIX</h1>
-</section><section id="nix-yfying-the-project" class="slide level2">
-<h1>NIX-YFYING THE PROJECT</h1>
-<pre><code>cd /path/to/project/
-Paket2Nix</code></pre>
-<p>Thats it. The <code>nix</code> directory now contains a top-level expression <code>top.nix</code> which you can use to build the package and all other expressions.</p>
-</section><section id="building" class="slide level2">
-<h1>BUILDING</h1>
-<pre><code>➜  nix git:(master) ✗ nix-build top.nix -A PaperScraper</code></pre>
-<p>will at this point produce:</p>
-<pre><code>➜  nix git:(master) ✗ nix-build top.nix -A PaperScraper
+</section><section class="slide level2">
 
-/nix/store/328ccq2dw1dq8i0dlmlzf0iknb1pad28-paperscraper-0.0.1</code></pre>
-<p>which we can install into our environment</p>
-<pre><code>➜  nix git:(master) ✗ nix-env -i -f ./top.nix -A PaperScraper
-replacing old ‘paperscraper-0.0.1’
-installing ‘paperscraper-0.0.1’
-building path(s) ‘/nix/store/0d4vh1vaw41v3xn9vq66yydck142z02d-user-environment’
-created 19003 symlinks in user environment</code></pre>
-</section><section id="deploying-system-wide" class="slide level2">
-<h1>Deploying system-wide</h1>
-</section><section id="mention-hydra" class="slide level2">
-<h1>mention hydra</h1>
-</section><section id="package-up-our-expressions" class="slide level2">
-<h1>package up our expressions</h1>
-<p><code>echo &quot;import ./top.nix&quot; &gt;&gt; nix/default.nix    tar cjvf nixexprs.tar.bz2 nix/    mkdir -p ~/tmp/mycache    mv nixexprs.tar.bz2 ~/tmp/mycache</code></p>
-</section><section id="create-a-simple-cache-for-our-expressions" class="slide level2">
-<h1>create a simple cache for our expressions</h1>
-<p><code>cd ~/tmp/mycache    nix-push --dest . --manifest /nix/store/328ccq2dw1dq8i0dlmlzf0iknb1pad28-paperscraper-0.0.1/</code> creates a binary cache of all expressions</p>
-</section><section id="using-the-channel" class="slide level2">
-<h1>using the channel</h1>
-<p>``` nix-channel --add file:///home/k/tmp/mycache krgn nix-channel --update</p>
-<p>nix-env -qaP | grep -i PaperScraper krgn.PaperScraper paperscraper-0.0.1 ``` ## creating a custom module</p>
+<h4 id="nixyfying-the-project">Nixyfying the project</h4>
+</section><section class="slide level2">
+
+<pre class="fragment"><code>cd /path/to/project/</code></pre>
+<pre class="fragment"><code>Paket2Nix</code></pre>
+<aside class="notes">
+<ul>
+<li>download all dependencies</li>
+<li>checksums each dependency</li>
+<li>generates Nix derivations</li>
+<li>mention <code>master.tar.gz</code> limitation</li>
+</ul>
+</aside>
+</section><section class="slide level2">
+
+<h4 id="thats-it">Thats it!</h4>
+<aside class="notes">
+<ul>
+<li>show directory structure and top-level derivation</li>
+<li>mention currently directory is hard-coded</li>
+</ul>
+</aside>
+</section><section class="slide level2">
+
+<h4 id="building">Building</h4>
+<pre class="fragment"><code>nix-build default.nix -A PaperScraper</code></pre>
+<pre class="fragment"><code>/nix/store/328ccq2dw1dq8i0dlmlzf0iknb1pad28-paperscraper-0.0.1</code></pre>
+</section><section class="slide level2">
+
+<h4 id="installing">Installing</h4>
+<p>We can simply install the service into our user environment.</p>
+<pre><code>nix-env -i -f ./default.nix -A PaperScraper</code></pre>
+</section><section class="slide level2">
+
+<h4 id="modules">Modules</h4>
+<ul>
+<li class="fragment">yay, declarative configuration!</li>
+<li class="fragment">needs to &quot;know&quot; about our package</li>
+<li class="fragment">system-wide (afaik)</li>
+</ul>
+<aside class="notes">
+<ul>
+<li>ask: are there other ways to use modules?</li>
+<li>ask: user-modules?</li>
+</ul>
+</aside>
+</section><section class="slide level2">
+
+<h4 id="creating-a-custom-module">Creating a custom module</h4>
 <pre><code>{config, pkgs, lib, ...}:
 
 let
@@ -1026,8 +999,10 @@ in
 
 with lib;
 
-{
-  options = {
+{</code></pre>
+</section><section class="slide level2">
+
+<pre><code>  options = {
     services.paperscraper = {
       enable = mkOption {
         default = false;
@@ -1045,9 +1020,10 @@ with lib;
         &#39;&#39;;
       };
     };
-  };
+  };</code></pre>
+</section><section class="slide level2">
 
-  config = mkIf cfg.enable {
+<pre><code>  config = mkIf cfg.enable {
     jobs.paperscraper = {
       description = &quot;Start the paperscraper service.&quot;;
       startOn = &quot;started network-interfaces&quot;;
@@ -1057,16 +1033,67 @@ with lib;
     environment.systemPackages = [ krgn.PaperScraper pkgs.recoll ];
   };
 }</code></pre>
-<p>and import this in <code>configuration.nix</code></p>
+</section><section class="slide level2">
+
+<p>Save somewhere and import in <code>configuration.nix</code>:</p>
 <pre><code>imports = [
    ./services/paperscraper.nix
   ]
   
-...
+
 services.paperscraper = {
   enable = true;
   user = &quot;k&quot;;
 };</code></pre>
+</section><section class="slide level2">
+
+<h4 id="but">BUT!</h4>
+</section><section class="slide level2">
+
+<h4 id="paperscraper-not-found">PaperScraper not found! :(</h4>
+<p>(of course)</p>
+</section><section class="slide level2">
+
+<h4 id="one-solution-custom-binary-cache">(One) Solution: Custom Binary Cache!</h4>
+<aside class="notes">
+<ul>
+<li>binary cache easily movable/hostable</li>
+<li>mention hydra</li>
+<li>more?</li>
+</ul>
+</aside>
+</section><section class="slide level2">
+
+<h4 id="simple-cache">Simple cache</h4>
+<pre class="fragment"><code>mkdir -p ~/tmp/mycache
+cd ~/tmp/mycache</code></pre>
+<pre class="fragment"><code>nix-push --dest . --manifest /nix/store/328ccq2dw1dq8i0dlmlzf0iknb1pad28-paperscraper-0.0.1/</code></pre>
+<aside class="notes">
+<ul>
+<li>creates a binary cache of all dependent expressions</li>
+<li>creates a manifest</li>
+<li>creates nar files (compressed archives)</li>
+</ul>
+</aside>
+</section><section class="slide level2">
+
+<h4 id="providing-our-packages">Providing our Packages</h4>
+<pre class="fragment"><code>tar cjvf nixexprs.tar.bz2 nix/</code></pre>
+<pre class="fragment"><code>mv nixexprs.tar.bz2 ~/tmp/mycache</code></pre>
+<h4 id="using-the-channel">Using the channel</h4>
+<pre class="fragment"><code>nix-channel --add file:///home/k/tmp/mycache krgn
+nix-channel --update</code></pre>
+<pre class="fragment"><code>nix-env -qaP | grep -i PaperScraper
+krgn.PaperScraper                                             paperscraper-0.0.1</code></pre>
+</section><section class="slide level2">
+
+<h4 id="d">:D</h4>
+</section><section class="slide level2">
+
+<h4 id="deploying-system-wide">Deploying system-wide</h4>
+<pre class="fragment"><code>nixos-rebuild switch --upgrade</code></pre>
+<pre class="fragment"><code>systemctl status paperscraper</code></pre>
+<pre class="fragment"><code>curl http://localhost:8083/search?term=monoid</code></pre>
 </section></section>
 <section><section id="useful-resources" class="titleslide slide level1"><h1>Useful resources</h1></section></section>
     </div>

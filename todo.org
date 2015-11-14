@@ -1,10 +1,6 @@
 # *scratch* buffer for creating quick outlines
 
 * TODO:
-** IN notes NUR stichworte nicht ablesen
-** IN WITZ AM ANFANG
-** IN TWITTER MSG am ende
-** IN TWITTER HANDLE + TITLE
 ** IN highlight.js integration                                       :pretty:
 ** IN ISSUES WITH FSHARP
     
@@ -55,7 +51,6 @@ codehero | vcunat: true, but sometimes months go by without updates
          | few users there must be.                                                                                            
 
     https://github.com/fsharp/fsharp/issues/426#issue-90449550
-** IN example for a `.fsproj`
 ** IN turn off animation
 ** IN use the white theme
 ** IN find good highlighter or make screenshots
