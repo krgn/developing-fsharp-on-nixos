@@ -12,7 +12,7 @@
 
 > - this talk is meant as an introduction to developing F# on NixOS
 > - I am not a Nix(OS) or F\# expert or .NET veteran (yet)
-> - sharing my personal experience and impressions
+> - sharing my personal experience and impressions while getting some work done
 > - approaches taken have a few rough edges, so please help me improve it!
 > - it is my first experience of this kind, so please do criticize me (gently)
 
@@ -37,6 +37,7 @@ Introductions:
 - my usage of NixOS
     * mainly as a development platform
     * use VMs for Windows-based work
+    * my experiences reflect a new user story
 </div>
 
 *****
@@ -44,7 +45,10 @@ Introductions:
 ### What?
 
 > - explore some basic aspects of F#
-> - look at a library for creating http services, Suave.IO
-> - give an overview over recoll, a file indexer
-> - construct a small service to query recoll via HTTP
-> - deploy that service using nix
+> - look some F# libraries and code
+> - show how construct a small service
+> - packaging and deployment using nix
+
+<div class="notes">
+* 
+</div>
