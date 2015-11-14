@@ -16,43 +16,14 @@ serve query results via HTTP.
 
 *****
 
-#### Bootstrapping
-
-*****
-
-The state of affairs of project management in mono/F# is still for the most part
-centered around using IDE's for everything.
-
-<div class="notes">
-- quite a big annoyance
-</div>
-
-*****
-
-There are the obvious Candidates, such as MS' Visual Studio or MonoDevelop, which
-is at least free and available via _nix_.
-
-*****
-
-To alleviate that situation for those who don't like IDEs, there is a project
-scaffold git repository with an initialization routine to help set up
-everything.
-
-*****
-
-We'll focus on that workflow for this talk, since this be beneficial to automate
-tasks down the line (think CI and deployment).
-
-*****
-
 #### Using Project Scaffold
 
 ```{.fsharp}
-→ git clone git@github.com:fsprojects/ProjectScaffold.git PaperScraper
+git clone git@github.com:fsprojects/ProjectScaffold.git PaperScraper
 ```
 
 ```{.fsharp .fragment}
-→ cd PaperScraper && ./build.sh
+cd PaperScraper && ./build.sh
 ```
 
 *****
@@ -267,50 +238,13 @@ so we need to comment it and the code in _Tests.fs_ out to ensure a clean build.
 > - needs to be configured correctly (whitelist directories)
 > - the indexer needs to be run in a cron/systemd timer job
 
-*****
+<div class="notes">
 
-#### An Example
-
-```
-➜  recoll -t -n 1 -m -q burrito
-Recoll query: ((burrito:(wqf=11) OR burritos))
-5 results (printing  1 max):
-application/pdf	[file:///home/k/doc/books/burrito_monads.pdf]	[burrito_monads.pdf]	74745	bytes	
-abstract =   Burritos for the Hungry Mathematician Ed Morehouse April 1, 2015 Abstract The advent of fast-casual Mexican-style dining establishments, such as Chipotle and Qdoba, has greatly improved the productivity of research mathematicians and theoretical
-author = LaTeX with hyperref package
-dbytes = 10425
-fbytes = 74745
-filename = burrito_monads.pdf
-fmtime = 01445444345
-mtime = 01445444345
-mtype = application/pdf
-origcharset = UTF-8
-pcbytes = 74745
-rcludi = /home/k/doc/books/burrito_monads.pdf|
-relevancyrating = 100%
-sig = 747451445444345
-title = 
-url = file:///home/k/doc/books/burrito_monads.pdf
-```
+</div>
 
 *****
 
-#### Search For File Names
-
-```
-➜  recoll -t -n 1 -f burrito
-Recoll query: (XSFSburrito_monads.pdf)
-1 results
-application/pdf	[file:///home/k/doc/books/burrito_monads.pdf]	[burrito_monads.pdf]	74745	bytes	
-```
-
-*****
-
-## So, parsing anyone?
-
-*****
-
-## FParsec to the rescue!
+## FParsec!
 
 > - I ♥ parsers 
 
@@ -318,14 +252,9 @@ application/pdf	[file:///home/k/doc/books/burrito_monads.pdf]	[burrito_monads.pd
 
 > - parser-combinator libary modeled after Parsec 
 > - a Parser is a function from some input to a possible result
-
-```{.fragment}
-type Parser<'a, 'u> = CharStream<'u> -> Reply<'a>
-```
 > - combinators (higher-order functions) compose to form new parsers
 > - conditional parsers (<|>)
 > - lookahead parsers that don't consume the input 
-> - FIXME: some more examples?
 
 *****
 
@@ -655,42 +584,10 @@ type WebPart = HttpContext -> SuaveTask<HttpContext>
 
 ## Pulling It All Together
 
-We need to:
-
-> 1) create data types (domain model)
-> 2) write a simple parser for _recoll_ output
-> 3) map HTTP query to command-line arguments
-> 4) serialiation of results to JSON
-
-*****
-
-#### Dependencies
-
-Add Suave and FParsec to _paket.depenecies_ and _src/PaperScraper/paket.references_:
-
-```
-source https://nuget.org/api/v2
-
-nuget FSharp.Formatting
-nuget NUnit 
-nuget NUnit.Runners
-nuget FAKE
-nuget SourceLink.Fake
-
-nuget Suave
-nuget FParsec
-
-github fsharp/FAKE modules/Octokit/Octokit.fsx
-```
-
-*****
-
-Contents of _paket.references_:
-
-```
-Suave
-FParsec
-```
+> - create data types (domain model)
+> - write a simple parser for _recoll_ output
+> - map HTTP query to command-line arguments
+> - serialiation of results to JSON
 
 *****
 
@@ -719,8 +616,6 @@ FParsec
 *****
 
 ##### Basic Types
-
-TODO: WORK IT OUT!!!
 
 ```{.fsharp .fragment}
 type MimeType = string
@@ -752,14 +647,47 @@ type SearchResult =
 
 ##### Parsing Recoll Output
 
-TODO: insert parser code 
+```{.fsharp .fragment}
+let searchResult : Parser<Row,unit> =
+  pipe5 (skipTo abstractLine)
+        (skipTo filenameLine)
+        (skipTo mtypeLine)
+        (skipTo charsetLine)
+        (skipTo urlLine)
+        mkRow
+
+let mkResult query count results =
+  { Query = query
+  ; Count = count
+  ; Rows  = results
+  }
+
+let recollOutput : Parser<QueryResult, unit> =
+  queryLine >>= fun q ->
+  totalLine >>= fun c ->
+  (parray (int(c)) searchResult) >>= fun rows ->
+  preturn (mkResult q c rows)
+```
 
 *****
 
 ##### Querying Recoll
 
-TODO: insert query code
+```{.fsharp .fragment}
+let executeProcess (exe,cmdline) =
+  let psi = new System.Diagnostics.ProcessStartInfo(exe,cmdline) 
+  psi.UseShellExecute <- false
+  psi.RedirectStandardOutput <- true
+  let p = System.Diagnostics.Process.Start(psi) 
+  let out = p.StandardOutput.ReadToEnd() 
+  p.WaitForExit()
+  ( p.ExitCode, out )
 
-*****
 
-##### 
+let queryRecoll term =
+  let binpath = "/run/current-system/sw/bin/recoll"
+  let raw = executeProcess (binpath, sprintf "-t -o -m -q %s" term)
+  if fst raw = 0
+  then parseOutput (snd raw)
+  else failwith "running recoll failed"
+```
