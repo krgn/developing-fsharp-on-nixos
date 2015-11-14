@@ -1,7 +1,5 @@
 # What is F\#?
 
-#### F\#
-
 *****
 
 > - developed in 2005 at Microsoft Research
@@ -52,7 +50,6 @@
 > - no type-classes
 > - noisy syntax & sometimes quirky syntax
 > - introduces new (confusing) nomenclature for common fp concepts
-> - reflection & dynamic typing
 > - impure
  
 <div class="notes">
@@ -184,16 +181,13 @@ me.OldEnough ()
 let horse : string option = Some "Hi."
 
 // handling all cases with match
-match f with
+match horse with
   | Some "Hello." -> printfn "it said hello."
   | Some "Hi."    -> printfn "it said hi."
   | Some _        -> printfn "it said something else."
   | None          -> printfn "it does not speak."
 ```
 
-```{.fsharp .fragment}
-TODO more examples for PM
-```
 <div class="notes">
 - useful for producing total code
 - types of pattern matching that are possible is long
@@ -261,7 +255,8 @@ type Tree<'a> =
 > - Monads, or _Computation Expressions_
 > - Quotations & Reflection (metaprogramming)
 > - Units of Measure
-> - MailboxProessors
+> - MailboxProcessors
+> - Async
 
 <div class="notes">
 * type providers cool to integrate with APIs

@@ -59,9 +59,9 @@ Introductions:
 ### What?
 
 > - explore some basic aspects of F#
-> - look some F# libraries and code
+> - briefly look some F# libraries and code
 > - examine packaging strategies using nix
-> - show how construct a small service
+> - show how to construct a small service
 > - simple deployment using nix
 
 <div class="notes">

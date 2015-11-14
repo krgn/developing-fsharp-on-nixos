@@ -89,9 +89,9 @@
 <h3 id="what">What?</h3>
 <ul>
 <li class="fragment">explore some basic aspects of F#</li>
-<li class="fragment">look some F# libraries and code</li>
+<li class="fragment">briefly look some F# libraries and code</li>
 <li class="fragment">examine packaging strategies using nix</li>
-<li class="fragment">show how construct a small service</li>
+<li class="fragment">show how to construct a small service</li>
 <li class="fragment">simple deployment using nix</li>
 </ul>
 <aside class="notes">
@@ -100,7 +100,7 @@
 </ul>
 </aside>
 </section></section>
-<section><section id="what-is-f" class="titleslide slide level1"><h1>What is F#?</h1></section><h4 id="f">F#</h4><section class="slide level2">
+<section><section id="what-is-f" class="titleslide slide level1"><h1>What is F#?</h1></section><section class="slide level2">
 
 <ul>
 <li class="fragment">developed in 2005 at Microsoft Research</li>
@@ -154,7 +154,6 @@
 <li class="fragment">no type-classes</li>
 <li class="fragment">noisy syntax &amp; sometimes quirky syntax</li>
 <li class="fragment">introduces new (confusing) nomenclature for common fp concepts</li>
-<li class="fragment">reflection &amp; dynamic typing</li>
 <li class="fragment">impure</li>
 </ul>
 <aside class="notes">
@@ -247,12 +246,11 @@ me.OldEnough ()</code></pre>
 <pre class="fsharp"><code>let horse : string option = Some &quot;Hi.&quot;
 
 // handling all cases with match
-match f with
+match horse with
   | Some &quot;Hello.&quot; -&gt; printfn &quot;it said hello.&quot;
   | Some &quot;Hi.&quot;    -&gt; printfn &quot;it said hi.&quot;
   | Some _        -&gt; printfn &quot;it said something else.&quot;
   | None          -&gt; printfn &quot;it does not speak.&quot;</code></pre>
-<pre class="fsharp fragment"><code>TODO more examples for PM</code></pre>
 <aside class="notes">
 <ul>
 <li>useful for producing total code</li>
@@ -308,7 +306,8 @@ type Tree&lt;&#39;a&gt; =
 <li class="fragment">Monads, or <em>Computation Expressions</em></li>
 <li class="fragment">Quotations &amp; Reflection (metaprogramming)</li>
 <li class="fragment">Units of Measure</li>
-<li class="fragment">MailboxProessors</li>
+<li class="fragment">MailboxProcessors</li>
+<li class="fragment">Async</li>
 </ul>
 <aside class="notes">
 <ul>
@@ -356,8 +355,8 @@ type Tree&lt;&#39;a&gt; =
 <p>To use <em>nix</em> for package management we will need to:</p>
 <ol type="1">
 <li class="fragment">create and maintain packages for nuget dependendcies</li>
-<li class="fragment">generate reference entries in .fsproj files linking-in store paths to <em>DLLs</em></li>
-<li class="fragment">repeat process for all dependencies</li>
+<li class="fragment">generate reference entries in .fsproj files to link store paths to <em>DLLs</em></li>
+<li class="fragment">disable automatic package restore</li>
 </ol>
 <aside class="notes">
 <ul>
@@ -371,9 +370,9 @@ type Tree&lt;&#39;a&gt; =
 </section><section class="slide level2">
 
 <ul>
-<li class="fragment">some work towards that end has already been done already</li>
-<li class="fragment">But! Very few packages exist now</li>
-<li class="fragment">it is somewhat orthogonal to how people develop</li>
+<li class="fragment">some work towards that end has already been done</li>
+<li class="fragment">But! Actually very few packages exist atm</li>
+<li class="fragment">it is somewhat orthogonal to how people actually develop</li>
 <li class="fragment">not enough incentive to get everything packaged</li>
 </ul>
 <aside class="notes">
@@ -391,15 +390,14 @@ type Tree&lt;&#39;a&gt; =
 <h4 id="the-obvious-solution">The (obvious) solution</h4>
 <ul>
 <li class="fragment">use <em>Paket</em> :)</li>
-<li class="fragment">lift nuget packages into the store</li>
-<li class="fragment">link packages into the <em>packages</em> directory at build time</li>
-<li class="fragment">disable nuget/paket</li>
+<li class="fragment">automate getting <em>Nuget</em> packages into the store</li>
+<li class="fragment">automate linking packages into the <em>packages</em> directory</li>
 <li class="fragment">use xbuild instead of FAKE</li>
 </ul>
 </section><section class="slide level2">
 
 <h4 id="paket2nix">Paket2Nix</h4>
-<pre><code>https://github.com/krgn/Paket2Nix</code></pre>
+<p>https://github.com/krgn/Paket2Nix</p>
 </section><section class="slide level2">
 
 <ul>

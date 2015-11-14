@@ -36,8 +36,8 @@
 To use _nix_ for package management we will need to: 
 
 > 1) create and maintain packages for nuget dependendcies
-> 2) generate reference entries in .fsproj files linking-in store paths to _DLLs_
-> 3) repeat process for all dependencies
+> 2) generate reference entries in .fsproj files to link store paths to _DLLs_
+> 3) disable automatic package restore
 
 <div class="notes">
 * SHOW EXAMPLE .fsproject
@@ -49,9 +49,9 @@ To use _nix_ for package management we will need to:
 
 ***** 
 
-> - some work towards that end has already been done already
-> - But! Very few packages exist now
-> - it is somewhat orthogonal to how people develop
+> - some work towards that end has already been done
+> - But! Actually very few packages exist atm
+> - it is somewhat orthogonal to how people actually develop
 > - not enough incentive to get everything packaged
 
 <div class="notes">
@@ -68,18 +68,15 @@ To use _nix_ for package management we will need to:
 #### The (obvious) solution
 
 > - use _Paket_ :)
-> - lift nuget packages into the store
-> - link packages into the _packages_ directory at build time
-> - disable nuget/paket
+> - automate getting _Nuget_ packages into the store
+> - automate linking packages into the _packages_ directory
 > - use xbuild instead of FAKE
 
 *****
 
 #### Paket2Nix
 
-```
 https://github.com/krgn/Paket2Nix
-```
 
 *****
 

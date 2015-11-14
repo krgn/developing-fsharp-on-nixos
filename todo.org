@@ -52,9 +52,3 @@ codehero | vcunat: true, but sometimes months go by without updates
 
     https://github.com/fsharp/fsharp/issues/426#issue-90449550
 ** IN make a small diagram for the nuget, paket and hence paket2nix workflow 
-** IN show a fsproj file, sln file, paket files
-** IN talk about how to get all of nuget into the tree (automation)
-** IN reduce the number of (empty) slides and put information into notes
-** IN MBrace (cloud computing library) and possible Nix/NixOS integration
-** IN paket2nix should really try and build on some of the already existing stuff like buildDotNetPadckage
-** IN bild von der Regie in der introduction
