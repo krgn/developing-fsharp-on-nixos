@@ -1,8 +1,4 @@
-# A Sample Project
-
-#### Project
-
-*****
+# Demo
 
 #### Proposition
 
@@ -12,59 +8,15 @@ able to index and query for information (e.g. [1]) via _curl_.
 So, lets build a small microservice around the _recoll_ full-text indexer and
 serve query results via HTTP.
 
-[1] https://github.com/ocharles/papers
-
 <div class="notes">
+- olli charles' git-annex
 - idea could at transferred to some more relevant technology like, e.g., _elasticsearch_ 
 - from there, it might be interesting to go on to explore clustering and config management with nix
 </div>
 
 *****
 
-#### A quick word about...
-
-*****
-
-#### Microservices!
-
-*****
-
-#### Microservies?
-
-_TODO_: remind myself WTF are they again?
-
-*****
-
-No, but seriously, its a stupid buzzword and we all know it but apparently we
-like pressing those buttons over and over again.
-
-*****
-
-A microservice is a small, stand-alone component most often part of a system of
-more of these stand-alone, de-coupled units.
-
-Essentially, its a scalability design pattern for web applications.
-
-*****
-
-From the point of view of a functional programming enthusiast, microservices are
-a good example of how small, stateless (_pure!_) building blocks (_referential
-transparency_) can be _composed_ into systems that are easier to understand and
-maintain and more robust that big monolithic code-bases.
-
-*****
-
-I am not a dev-ops person, but I hear that larger systems become fiendishly hard
-to deploy and monitor, though.
-
-Blame successfully shifted!
-
-:)
-
-<div class="notes">
-</div>
-
-## Bootstrapping
+#### Bootstrapping
 
 *****
 
