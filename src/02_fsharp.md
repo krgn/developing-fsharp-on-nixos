@@ -4,64 +4,66 @@
 
 *****
 
-> F# was developed in 2005 at Microsoft Research[1]. In many ways, F# is
-> essentially a .Net implementation of OCaml, combining the power and expressive
-> syntax of functional programming with the tens of thousands of classes which
-> make up the .NET class library.
+> - developed in 2005 at Microsoft Research
+> - essentially a .NET implementation of OCaml
+> - functional-first, strict, multi-paradigm programming language
+> - first-class citizen in the .NET ecosystem
+> - compiles to IL (byte-code format) and runs on CLR (AOT available)
+
+<div class="notes">
+* type system is considerably simpler than haskells
+* no type classes
+</div>
 
 *****
 
-#### Overview
+#### Ecosystem
 
-> - functional-first CLI programming language in the ML family
-> - object-orientation
-> - the 'm'-word (look at the computation-food paper that I downloaded)
-> - ecosystem seems somewhat fragmented, but there are many useful libraries out there
+> - Free Software!
+> - runs on mono, as well as the coreclr (both available through nix)
+> - feeds off of Nuget (package manager and repository)
 
 <div class="notes">
+- has a host of good libraries
 </div>
 
 *****
 
 #### Pros: 
 
-> - For those who (have to) write software for the CLR its a solid choice
-> - With projects like WebSharper or FunScript, F# can be used throughout the whole stack (share types and code, thus safety)
-> - Interop wth C# works really well, and there are lots of good libraries
-> - its essentially a really good blend between the principled and utilitarian mind-sets
+> - great integration with the CLR and other languages targeting it
+> - lots of good libraries
+> - full-stack language 
+> - good blend of principled and pragmatic mind-sets
+> - reflection & dynamic typing
 
 <div class="notes">
 - WARNING: highly subjective
+- WebSharper
+- Akka.NET
+- MBrace 
 </div>
 
 *****
 
 #### Cons:
 
-> - it introduces new nomenclature for common fp concepts (monads), to create a more clear distinction to other languages, which confused me more than it helped
-> - TODO: find out differences in the type systems
-> - no GADTs
-> - while OO has some points to go for it (think familiarity to large audiences
->   of developers, generally well understood) it is a bit ugly and alien in this context.
+> - no type-classes
+> - noisy syntax
+> - quirky syntax
+> - impure
+> - introduces new (confusing) nomenclature for common fp concepts
+> - reflection & dynamic typing
  
 <div class="notes">
 - again, WARNING: highly subjective!
+- quirks include method call syntax tuples?
+- also, methods can apparently not easly be partially applied
+- class constructors cannot be partially applied
+- lots of little inconsistencies
+- type checker is finicky
+- lots of braces in interaction with classes
 </div>
-
-*****
-
-#### Differences from Haskell
-
-> - TODO: list up different operators
-> - TODO: explain fixity rules
-> - TODO: show a small implementation of a ComputationBuilder
-
-> - impure: _launchMissiles ()_ whereever you feel like it
-> - no `where`
-
-*****
-
-#### Let's look at some code
 
 *****
 
@@ -98,13 +100,11 @@ x |> f
 <div class="notes">
 VARIABLE BINDING
 
-- for me "seeing is believing"
-- all statements are bound using `let`
+- "seeing is believing"
+- all statements are bound using `let` (noise)
 - mention `let .. in` 
 - talk about the type annotation 
-- Not my absolute super-favourite programming language, but certainly a _very_ good one.
 </div>
-
 
 *****
 
@@ -170,10 +170,10 @@ me.OldEnough ()
 ```
 
 <div class="notes">
-- method invokation is confusing, because args are esseentially passed as a
-  n-tuplet
+- method invokation is confusing
+- args are esseentially passed as a n-tuples
 - let-bound variables are private
-- mutability is simble, if somewhat verbose
+- mutability is simple, if somewhat verbose
 </div>
 
 *****
@@ -194,7 +194,6 @@ match f with
 ```{.fsharp .fragment}
 TODO more examples for PM
 ```
-
 <div class="notes">
 - useful for producing total code
 - types of pattern matching that are possible is long
@@ -258,11 +257,16 @@ type Tree<'a> =
 
 #### Other Cool Things To Look At
 
-> - Type Providers
+> - Type Providers!
 > - Monads, or _Computation Expressions_
 > - Quotations & Reflection (metaprogramming)
 > - Units of Measure
-> - built-in support for Actor-style programming
+> - MailboxProessors
+
+<div class="notes">
+* type providers cool to integrate with APIs
+* Async good support for concurrent and parallel computation (Async.Parallel)
+</div>
 
 *****
 
