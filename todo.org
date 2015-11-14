@@ -55,8 +55,7 @@ codehero | vcunat: true, but sometimes months go by without updates
          | few users there must be.                                                                                            
 
     https://github.com/fsharp/fsharp/issues/426#issue-90449550
-
-
+** IN example for a `.fsproj`
 ** IN turn off animation
 ** IN use the white theme
 ** IN find good highlighter or make screenshots

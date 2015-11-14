@@ -1,5 +1,3 @@
-*****
-
 ## F\# and Nix
 
 *****
@@ -42,6 +40,9 @@ To use _nix_ for package management we will need to:
 > 3) repeat process for all dependencies
 
 <div class="notes">
+* SHOW EXAMPLE .fsproject
+* SHOW EXAMPLE .sln
+* SHOW EXAMPLE paket.references/.lock/.template
 * automating the process with the right tooling ;)
 * paket already manages references 
 </div>
@@ -66,8 +67,9 @@ To use _nix_ for package management we will need to:
 
 #### The (obvious) solution
 
+> - use _Paket_ :)
 > - lift nuget packages into the store
-> - link packages into the packages directory at build time
+> - link packages into the _packages_ directory at build time
 > - disable nuget/paket
 > - use xbuild instead of FAKE
 
