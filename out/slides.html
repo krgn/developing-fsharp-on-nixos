@@ -4,14 +4,18 @@
   <meta charset="utf-8">
   <meta name="generator" content="pandoc">
   <meta name="author" content="Karsten Gebbert">
-  <meta name="dcterms.date" content="2015-12-10">
+  <meta name="dcterms.date" content="2015-12-11">
   <title>Developing F# on NixOS</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
   <link rel="stylesheet" href="reveal.js/css/reveal.css"/>
+  <link rel="stylesheet" href="hl/github.css"/>
+  <script src="jquery.min.js"></script>
+  <script src="hl/highlight.pack.js"></script>
+  <script src="init.js"></script>
   <style type="text/css">code{white-space: pre;}</style>
-  <link rel="stylesheet" href="reveal.js/css/theme/night.css" id="theme">
+  <link rel="stylesheet" href="reveal.js/css/theme/white.css" id="theme">
   <!-- Printing and PDF exports -->
   <script>
     var link = document.createElement( 'link' );
@@ -31,7 +35,7 @@
 <section>
     <h1 class="title">Developing F# on NixOS</h1>
     <h2 class="author">Karsten Gebbert</h2>
-    <h3 class="date">27/10/2015</h3>
+    <h3 class="date">15/11/2015</h3>
 </section>
 
 <section><section id="hi." class="titleslide slide level1"><h1>Hi.</h1></section><section class="slide level2">
@@ -100,10 +104,11 @@
 
 <ul>
 <li class="fragment">developed in 2005 at Microsoft Research</li>
-<li class="fragment">essentially a .NET implementation of OCaml</li>
+<li class="fragment">essentially a <em>.NET</em> implementation of OCaml</li>
 <li class="fragment">functional-first, strict, multi-paradigm programming language</li>
-<li class="fragment">first-class citizen in the .NET ecosystem</li>
-<li class="fragment">compiles to IL (byte-code format) and runs on CLR (AOT available)</li>
+<li class="fragment">first-class citizen in the <em>.NET</em> ecosystem</li>
+<li class="fragment">compiles to byte-code and runs on <em>CLR</em></li>
+<li class="fragment"><em>AOT</em> available in <em>mono</em></li>
 </ul>
 <aside class="notes">
 <ul>
@@ -116,7 +121,7 @@
 <h4 id="ecosystem">Ecosystem</h4>
 <ul>
 <li class="fragment">Free Software!</li>
-<li class="fragment">runs on mono, as well as the coreclr (both available through nix)</li>
+<li class="fragment">runs on <em>mono</em>, as well as the <em>coreclr</em> (both in nix)</li>
 <li class="fragment">feeds off of Nuget (package manager and repository)</li>
 </ul>
 <aside class="notes">
@@ -128,14 +133,14 @@
 
 <h4 id="pros">Pros:</h4>
 <ul>
-<li class="fragment">great integration with the CLR and other languages targeting it</li>
+<li class="fragment">great integration with other languages targeting CLR</li>
 <li class="fragment">lots of good libraries</li>
 <li class="fragment">full-stack language</li>
-<li class="fragment">good blend of principled and pragmatic mind-sets</li>
-<li class="fragment">reflection &amp; dynamic typing</li>
+<li class="fragment">good blend of principled <em>and</em> pragmatic mind-sets</li>
 </ul>
 <aside class="notes">
 <ul>
+<li>reflection &amp; dynamic typing</li>
 <li>WARNING: highly subjective</li>
 <li>WebSharper</li>
 <li>Akka.NET</li>
@@ -147,11 +152,10 @@
 <h4 id="cons">Cons:</h4>
 <ul>
 <li class="fragment">no type-classes</li>
-<li class="fragment">noisy syntax</li>
-<li class="fragment">quirky syntax</li>
-<li class="fragment">impure</li>
+<li class="fragment">noisy syntax &amp; sometimes quirky syntax</li>
 <li class="fragment">introduces new (confusing) nomenclature for common fp concepts</li>
 <li class="fragment">reflection &amp; dynamic typing</li>
+<li class="fragment">impure</li>
 </ul>
 <aside class="notes">
 <ul>
@@ -420,8 +424,8 @@ type Tree&lt;&#39;a&gt; =
 <section><section id="demo" class="titleslide slide level1"><h1>Demo</h1></section><section class="slide level2">
 
 <h4 id="proposition">Proposition</h4>
-<p>Assume we have a lots of great computer science papers on our SSD, and we'd like to be able to index and query for information (e.g. [1]) via <em>curl</em>.</p>
-<p>So, lets build a small microservice around the <em>recoll</em> full-text indexer and serve query results via HTTP.</p>
+<p>Assume we have a lots of great computer science papers on our SSD, and we'd like to be able to index and query for information via <em>curl</em>.</p>
+<p>Build a small microservice around the <em>recoll</em> full-text indexer and serve query results via HTTP.</p>
 <aside class="notes">
 <ul>
 <li>olli charles' git-annex</li>
@@ -431,7 +435,7 @@ type Tree&lt;&#39;a&gt; =
 </aside>
 </section><section class="slide level2">
 
-<h4 id="using-project-scaffold">Using Project Scaffold</h4>
+<h4 id="the-project-scaffold">The Project Scaffold</h4>
 <pre class="fsharp"><code>git clone git@github.com:fsprojects/ProjectScaffold.git PaperScraper</code></pre>
 <pre class="fsharp fragment"><code>cd PaperScraper &amp;&amp; ./build.sh</code></pre>
 </section><section class="slide level2">
@@ -447,36 +451,28 @@ type Tree&lt;&#39;a&gt; =
 <p><code>error : Target named 'Rebuild' not found in the project.</code></p>
 </section><section class="slide level2">
 
-<h4 id="a-note-about-build-targets">A Note About Build Targets</h4>
-<p>Since in <em>NixOS</em> there is no(t one, but many) Global Assembly Cache, resolving default build targets shipped with <em>F#</em> does not work as expected.</p>
-</section><section class="slide level2">
-
-<p>The solution is to patch all <em>.fsproj</em> files in the solution and only conditionally set the <em>FSharpTargetsPath</em> if the target actually exists:</p>
+<h4 id="build-targets">Build Targets</h4>
 <pre><code>- &lt;FSharpTargetsPath&gt;$(MSBuildExtensionsPath32)\Microsoft\VisualStudio...
 + &lt;FSharpTargetsPath Condition=&quot;Exists(&#39;$(MSBuildExtensionsPath32)\M...</code></pre>
 </section><section class="slide level2">
 
-<p>There is a package <em>nix</em> written by <em><span class="citation" data-cites="obadz_">@obadz_</span> which contains a script that finds and patches up </em>.fsproj_ files to look out for the <em>FSharpTargetsPath</em> enviroment variable.</p>
 <p><code>→ nix-env -i dotnetbuildhelpers</code></p>
-</section><section class="slide level2">
-
-<h4 id="usage">Usage:</h4>
-<pre><code>→ patch-fsharp-targets.sh
+<pre class="fragment"><code>→ patch-fsharp-targets.sh
   Patching F# targets in fsproj files...
   ./src/PaperScraper/PaperScraper.fsproj
   ./tests/PaperScraper.Tests/PaperScraper.Tests.fsproj</code></pre>
+<aside class="notes">
+<ul>
+<li>written by _<span class="citation" data-cites="obadz_">@obadz_</span></li>
+<li>patches up <em>.fsproj</em> files</li>
+<li><em>FSharpTargetsPath</em> enviroment variable.</li>
+</ul>
+</aside>
 </section><section class="slide level2">
 
-<p>Last, we only need to set <em>FSharpTargetsPath</em> in our shell:</p>
-<pre class="shell"><code>→ export FSharpTargetsPath=$(dirname $(which fsharpc))/../lib/mono/4.5/Microsoft.FSharp.Targets</code></pre>
-<pre class="shell fragment"><code>→ set -x FSharpTargetsPath (dirname (which fsharpc))/../lib/mono/4.5/Microsoft.FSharp.Targets</code></pre>
-<pre class="shell fragment"><code>{ config, pkgs, ... }:
-{
-  environment.variables.FSharpTargetsPath = &quot;${pkgs.fsharp}/lib/mono/4.5/Microsoft.FSharp.Targets&quot;;
-}</code></pre>
 </section><section class="slide level2">
 
-<h4 id="hm-more-errors">Hm, More Errors</h4>
+<h4 id="and-then-more-errors">And then, more errors :(</h4>
 <p>Unfortuantely, more problems crop up at this point.</p>
 <ul>
 <li>FSharp.Core dll is missing when running tests, hence the build fails</li>
@@ -550,9 +546,9 @@ FSharp.Core</code></pre>
 
 <h4 id="but-were-building-an-executable-right">But we're building an executable, right?!</h4>
 <p>The project template at this point generates a library project by default, so the <em>.fsproj</em> file needs to be amended in 2 ways:</p>
-<pre class="fragment"><code>    &lt;OutputType&gt;Exe&lt;/OutputType&gt;</code></pre>
-<pre class="fragment"><code>    &lt;ErrorReport&gt;prompt&lt;/ErrorReport&gt;
-    &lt;Externalconsole&gt;true&lt;/Externalconsole&gt;</code></pre>
+<pre class="fragment"><code>&lt;OutputType&gt;Exe&lt;/OutputType&gt;</code></pre>
+<pre class="fragment"><code>&lt;ErrorReport&gt;prompt&lt;/ErrorReport&gt;
+&lt;Externalconsole&gt;true&lt;/Externalconsole&gt;</code></pre>
 </section><section class="slide level2">
 
 <p>Additionally, the tests project also holds a reference to the current project, so we need to comment it and the code in <em>Tests.fs</em> out to ensure a clean build.</p>
@@ -614,22 +610,6 @@ let plainChars : Parser&lt;string, unit&gt; =
 <li>there is a more concise way to do this, but it its a good example nonetheless</li>
 </ul>
 </aside>
-</section><section class="slide level2">
-
-<p>A mime-type string as seen in our output is a sequence of plain characters separated by a slash, followed by some more plain characters.</p>
-<pre><code>application/pdf ....</code></pre>
-<pre class="fragment"><code>let mimeType : Parser&lt;string, unit&gt; =
-  plainChars  &gt;&gt;= fun res1 -&gt;
-  pstring &quot;/&quot; &gt;&gt;= fun _    -&gt;
-  plainChars  &gt;&gt;= fun res2 -&gt;
-  preturn (res1+&quot;/&quot;+res2)</code></pre>
-<div notes="class">
-<ul>
-<li>this is not actually a valid media type parser at all</li>
-<li>there are media types with +.- and numbers</li>
-<li>good enough for now</li>
-</ul>
-</div>
 </section><section id="defining-the-models" class="slide level2">
 <h1>Defining The Models</h1>
 </section><section class="slide level2">
@@ -1109,6 +1089,8 @@ krgn.PaperScraper                                             paperscraper-0.0.1
       Reveal.initialize({
         // Vertical centering of slides
         center: true,
+        // Transition style
+        transition: 'none', // none/fade/slide/convex/concave/zoom
 
         // Optional reveal.js plugins
         dependencies: [

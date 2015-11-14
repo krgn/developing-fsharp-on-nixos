@@ -5,10 +5,11 @@
 *****
 
 > - developed in 2005 at Microsoft Research
-> - essentially a .NET implementation of OCaml
+> - essentially a _.NET_ implementation of OCaml
 > - functional-first, strict, multi-paradigm programming language
-> - first-class citizen in the .NET ecosystem
-> - compiles to IL (byte-code format) and runs on CLR (AOT available)
+> - first-class citizen in the _.NET_ ecosystem
+> - compiles to byte-code and runs on _CLR_
+> - _AOT_ available in _mono_
 
 <div class="notes">
 * type system is considerably simpler than haskells
@@ -20,7 +21,7 @@
 #### Ecosystem
 
 > - Free Software!
-> - runs on mono, as well as the coreclr (both available through nix)
+> - runs on _mono_, as well as the _coreclr_ (both in nix)
 > - feeds off of Nuget (package manager and repository)
 
 <div class="notes">
@@ -31,13 +32,13 @@
 
 #### Pros: 
 
-> - great integration with the CLR and other languages targeting it
+> - great integration with other languages targeting CLR 
 > - lots of good libraries
 > - full-stack language 
-> - good blend of principled and pragmatic mind-sets
-> - reflection & dynamic typing
+> - good blend of principled *and* pragmatic mind-sets
 
 <div class="notes">
+- reflection & dynamic typing
 - WARNING: highly subjective
 - WebSharper
 - Akka.NET
@@ -49,11 +50,10 @@
 #### Cons:
 
 > - no type-classes
-> - noisy syntax
-> - quirky syntax
-> - impure
+> - noisy syntax & sometimes quirky syntax
 > - introduces new (confusing) nomenclature for common fp concepts
 > - reflection & dynamic typing
+> - impure
  
 <div class="notes">
 - again, WARNING: highly subjective!
