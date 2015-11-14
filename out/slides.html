@@ -159,7 +159,7 @@
 <ul>
 <li class="fragment">no type-classes</li>
 <li class="fragment">noisy syntax &amp; sometimes quirky syntax</li>
-<li class="fragment">introduces new (confusing) nomenclature for common fp concepts</li>
+<li class="fragment">introduces new (confusing) nomenclature</li>
 <li class="fragment">impure</li>
 </ul>
 <aside class="notes">
@@ -457,7 +457,7 @@ type Tree&lt;&#39;a&gt; =
 </figure>
 </section><section class="slide level2">
 
-<p><code>error : Target named 'Rebuild' not found in the project.</code></p>
+<pre class="shell"><code>error : Target named &#39;Rebuild&#39; not found in the project.</code></pre>
 </section><section class="slide level2">
 
 <h4 id="build-targets">Build Targets</h4>
@@ -465,8 +465,8 @@ type Tree&lt;&#39;a&gt; =
 + &lt;FSharpTargetsPath Condition=&quot;Exists(&#39;$(MSBuildExtensionsPath32)\M...</code></pre>
 </section><section class="slide level2">
 
-<p><code>→ nix-env -i dotnetbuildhelpers</code></p>
-<pre class="fragment"><code>→ patch-fsharp-targets.sh
+<pre><code>→ nix-env -i dotnetbuildhelpers
+→ patch-fsharp-targets.sh
   Patching F# targets in fsproj files...
   ./src/PaperScraper/PaperScraper.fsproj
   ./tests/PaperScraper.Tests/PaperScraper.Tests.fsproj</code></pre>
@@ -482,6 +482,9 @@ type Tree&lt;&#39;a&gt; =
 </section><section class="slide level2">
 
 <h4 id="and-then-more-errors">And then, more errors</h4>
+<figure>
+<img src="img/baboon.gif" alt="" />
+</figure>
 <aside class="notes">
 <ul>
 <li>FSharp.Core dll is missing</li>
@@ -1041,7 +1044,12 @@ krgn.PaperScraper                                             paperscraper-0.0.1
 <pre class="fragment"><code>systemctl status paperscraper</code></pre>
 <pre class="fragment"><code>curl http://localhost:8083/search?term=monoid</code></pre>
 </section></section>
-<section><section id="useful-resources" class="titleslide slide level1"><h1>Useful resources</h1></section></section>
+<section><section id="useful-resources" class="titleslide slide level1"><h1>Useful resources</h1></section><section class="slide level2">
+
+<h4 id="barfton-1"><span class="citation" data-cites="barfton">@barfton</span></h4>
+<h4 id="kioctl.it-1">k@ioctl.it</h4>
+<h4 id="httpsgithub.comkrgn-1">https://github.com/krgn</h4>
+</section></section>
     </div>
   </div>
 

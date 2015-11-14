@@ -38,7 +38,9 @@ Answer a couple of questions and you're set. But wait!
 
 *****
 
-```error : Target named 'Rebuild' not found in the project.```
+```{.shell}
+error : Target named 'Rebuild' not found in the project.
+```
 
 *****
 
@@ -51,9 +53,8 @@ Answer a couple of questions and you're set. But wait!
 
 *****
 
-```→ nix-env -i dotnetbuildhelpers```
-
-```{.fragment}
+```
+→ nix-env -i dotnetbuildhelpers
 → patch-fsharp-targets.sh
   Patching F# targets in fsproj files...
   ./src/PaperScraper/PaperScraper.fsproj
@@ -70,6 +71,8 @@ Answer a couple of questions and you're set. But wait!
 *****
 
 #### And then, more errors
+
+![](img/baboon.gif)
 
 <div class="notes">
 - FSharp.Core dll is missing
@@ -152,7 +155,7 @@ the _.fsproj_ file needs to be amended in 2 ways:
 > - the indexer needs to be run in a cron/systemd timer job
 
 <div class="notes">
-
+* show a quick query in the command line
 </div>
 
 *****
@@ -197,11 +200,11 @@ let plainChars : Parser<string, unit> =
 
 *****
 
-## Defining The Models
+#### The Models
 
 ***** 
 
-#### A query result: 
+#### query result: 
 
 > - begins with the query issued, followed by
 > - a line containing the number of matching items, followed by
@@ -209,7 +212,7 @@ let plainChars : Parser<string, unit> =
 
 *****
 
-#### A Result Row:
+#### Result Row:
 
 > - begins with an abstract, eventually followed by a
 > - file name line, eventually followed by a
@@ -224,8 +227,6 @@ let plainChars : Parser<string, unit> =
 </div>
 
 *****
-
-#### QueryResult:
 
 ```{.fsharp}
 type QueryResult =
@@ -242,8 +243,6 @@ type QueryResult =
 ```
 
 *****
-
-#### Result Row:
 
 ```{.fsharp}
 type Row =
