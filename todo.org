@@ -1,7 +1,6 @@
 # *scratch* buffer for creating quick outlines
 
 * TODO:
-** IN highlight.js integration                                       :pretty:
 ** IN ISSUES WITH FSHARP
     
     krgn | obadz: lucky! thats cool                                                                                           
@@ -51,4 +50,3 @@ codehero | vcunat: true, but sometimes months go by without updates
          | few users there must be.                                                                                            
 
     https://github.com/fsharp/fsharp/issues/426#issue-90449550
-** IN make a small diagram for the nuget, paket and hence paket2nix workflow 

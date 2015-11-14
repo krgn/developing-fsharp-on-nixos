@@ -69,54 +69,16 @@ Answer a couple of questions and you're set. But wait!
 
 *****
 
-#### And then, more errors :(
-
-Unfortuantely, more problems crop up at this point.
-
-- FSharp.Core dll is missing when running tests, hence the build fails
-- FSharp.Core dll is missing when generating documentation, hence the build fails
-
-:(
+#### And then, more errors
 
 <div class="notes">
+- FSharp.Core dll is missing
 - mono crashes really hard running the tests
-</div>
 
-*****
-
-#### Ah yes!
-
-> "In compiled applications, you should never assume that FSharp.Core is in the
-> GAC ("Global Assembly Cache"). Instead, you should deploy the appropriate
-> FSharp.Core as part of your application."
-
-https://fsharp.github.io/2015/04/18/fsharp-core-notes.html
-
-*****
-
-#### Quick Fix:
-
-Ship _FSharp.Core_ as part of the build output and manage the dependency with _paket_.
-
-```{.fragment}
-in paket.dependencies, add;
-
-FSharp.Core = 4.0.0.1
-```
-```{.fragment}
-in src/PaperScraper/paket.references, add:
-
-FSharp.Core
-```
-
-```{.fragment}
-<Reference Include="FSharp.Core">
-  <Private>True</Private>
-  <HintPath>..\..\packages\FSharp.Core\lib\net40\FSharp.Core.dll</HintPath>
-</Reference>
-```
-
-<div class="notes">
+- "In compiled applications, you should never assume that FSharp.Core is in the
+  GAC ("Global Assembly Cache"). Instead, you should deploy the appropriate
+  FSharp.Core as part of your application."
+- Ship _FSharp.Core_ as part of the build output and manage the dependency with _paket_.
 - add the FSharp.Core and verision to paket.dependencies
 - add the FSharp.Core to paket.references in the project and tests project
 - make sure to set TargetFSharpCoreVersion to the correct version!
@@ -126,7 +88,7 @@ FSharp.Core
 
 *****
 
-#### A Better™ Fix:
+#### A preliminary Fix:
 
 It would be better to use the F# version shipped with NixOS.
 
@@ -155,25 +117,7 @@ It would be better to use the F# version shipped with NixOS.
 
 *****
 
-#### Finding the correct F\# Version 
-
-![](img/fsharp-versions.png)
-
-http://stackoverflow.com/questions/20332046/correct-version-of-fsharp-core
-
-*****
-
-#### Documentation? 
-
-Both documentation and help targets don't build at this point as F# script files
-reference _DLLs_ directly by path.
-
-*****
-
 #### But we're building an executable, right?!
-
-The project template at this point generates a library project by default, so
-the _.fsproj_ file needs to be amended in 2 ways:
 
 ```{.fragment}
 <OutputType>Exe</OutputType>
@@ -184,12 +128,9 @@ the _.fsproj_ file needs to be amended in 2 ways:
 <Externalconsole>true</Externalconsole>
 ```
 
-*****
-
-Additionally, the tests project also holds a reference to the current project,
-so we need to comment it and the code in _Tests.fs_ out to ensure a clean build.
-
 <div class="notes">
+The project template at this point generates a library project by default, so
+the _.fsproj_ file needs to be amended in 2 ways:
 </div>
 
 *****
@@ -200,9 +141,7 @@ so we need to comment it and the code in _Tests.fs_ out to ensure a clean build.
 
 *****
 
-## Recoll
-
-***** 
+#### Recoll
 
 > - full-text search tool 
 > - uses xapian underneath (like other great tools, e.g. `notmuch` and `mu`)
@@ -218,7 +157,7 @@ so we need to comment it and the code in _Tests.fs_ out to ensure a clean build.
 
 *****
 
-## FParsec!
+#### FParsec!
 
 > - I ♥ parsers 
 
@@ -270,7 +209,7 @@ let plainChars : Parser<string, unit> =
 
 *****
 
-#### A Result "Row":
+#### A Result Row:
 
 > - begins with an abstract, eventually followed by a
 > - file name line, eventually followed by a
